@@ -6,6 +6,7 @@ public class InvalidCognitoTokenException extends RuntimeException {
         super(throwable);
     }
 
-    public InvalidCognitoTokenException() {
+    public InvalidCognitoTokenException(String s) {
+        super(s);
     }
 }

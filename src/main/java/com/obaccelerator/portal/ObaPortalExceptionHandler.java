@@ -4,6 +4,7 @@ import com.obaccelerator.common.error.EntityNotFoundException;
 import com.obaccelerator.common.error.ObaBaseExceptionHandler;
 import com.obaccelerator.common.error.ObaError;
 import com.obaccelerator.common.error.ObaErrorMessage;
+import com.obaccelerator.portal.registration.RegistrationAlreadyExistsException;
 import com.obaccelerator.portal.session.InvalidCognitoTokenException;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.ResponseEntity;
@@ -50,6 +51,12 @@ public class ObaPortalExceptionHandler extends ObaBaseExceptionHandler {
     @ExceptionHandler(value = {EntityNotFoundException.class})
     public ResponseEntity<ObaErrorMessage> handleEntityNotFoundException(EntityNotFoundException e, WebRequest webRequest) {
         ObaErrorMessage errorMessage = new ObaErrorMessage(ObaError.OBA_ENTITY_NOT_FOUND);
+        return handle(errorMessage, e);
+    }
+
+    @ExceptionHandler(value = RegistrationAlreadyExistsException.class)
+    public ResponseEntity<ObaErrorMessage> handleRegistrationAlreadyExistsException(RegistrationAlreadyExistsException e, WebRequest webRequest) {
+        ObaErrorMessage errorMessage = new ObaErrorMessage(ObaError.PORTAL_REGISTRATION_ALREADY_EXISTS);
         return handle(errorMessage, e);
     }
 

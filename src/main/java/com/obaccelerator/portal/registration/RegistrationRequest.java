@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.validation.constraints.Email;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Pattern;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
@@ -19,10 +20,12 @@ public class RegistrationRequest {
     @Pattern(regexp = "^([A-Za-z '-]{1,30})")
     private String lastName;
     @Pattern(regexp = "^([A-Za-z0-9 '-?!_&*]{1,50})")
-    private String companyName;
+    private String organizationName;
     @Email
     @JsonProperty("dqwuh")
     private String email; // this is the actual email address
+    @NotEmpty
+    private String cognitoUserId;
 
     /**
      * Honey pot fields - if any of these are filled we are likely dealing with a bot

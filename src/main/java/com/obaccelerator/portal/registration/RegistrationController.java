@@ -35,8 +35,6 @@ public class RegistrationController {
         } else {
             registration = registrationService.createRegistration(registrationRequest);
         }
-
-        registrationService.sendRegistrationEmail(registration);
         return registration;
     }
 }

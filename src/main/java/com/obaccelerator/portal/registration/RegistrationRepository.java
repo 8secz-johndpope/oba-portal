@@ -19,34 +19,30 @@ public class RegistrationRepository {
         this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
     }
 
-    public UUID createRegistration(String firstName, String lastName, String email, String companyName) {
+    public UUID createRegistration(String cognitoId, String organizationName) {
         UUID uuid = UUID.randomUUID();
-        namedParameterJdbcTemplate.update("INSERT INTO obaportal.customer_registration (id, first_name, last_name, " +
-                "email, company_name, created) " +
-                "VALUES (:id, :firstName, :lastName, :email, :companyName, :created)", new HashMap<String, Object>() {
+        String id = uuid.toString();
+        namedParameterJdbcTemplate.update("INSERT INTO obaportal.registration (id, cognito_user_id, organization_name, created) " +
+                "VALUES (:id, :cognitoId, :organizationName, :created)", new HashMap<String, Object>() {
             {
-                put("id", uuid.toString());
-                put("firstName", firstName);
-                put("lastName", lastName);
-                put("email", email);
-                put("companyName", companyName);
+                put("id", id);
+                put("cognitoId", cognitoId);
+                put("organizationName", organizationName);
                 put("created", DateUtil.currentDateTimeUtcForMysql());
             }
         });
         return uuid;
     }
 
-    public UUID createRegistration(String firstName, String lastName, String email, String companyName, BotEvaluationResult botEvaluationResult) {
+    public UUID createRegistration(String cognitoId, String organizationName, BotEvaluationResult botEvaluationResult) {
         UUID uuid = UUID.randomUUID();
-        namedParameterJdbcTemplate.update("INSERT INTO obaportal.customer_registration (id, first_name, last_name, " +
-                "email, company_name, likely_a_bot, full_request, created) " +
-                "VALUES (:id, :firstName, :lastName, :email, :companyName, :likelyABot, :fullRequest, :created)", new HashMap<String, Object>() {
+        namedParameterJdbcTemplate.update("INSERT INTO obaportal.registration (id, cognito_user_id, organization_name, " +
+                "likely_a_bot, full_request, created) " +
+                "VALUES (:id, :cognitoId, :organizationName, :likelyABot, :fullRequest, :created)", new HashMap<String, Object>() {
             {
                 put("id", uuid.toString());
-                put("firstName", firstName);
-                put("lastName", lastName);
-                put("email", email);
-                put("companyName", companyName);
+                put("cognitoId", cognitoId);
+                put("organizationName", organizationName);
                 put("likelyABot", botEvaluationResult.isLikelyABot());
                 put("fullRequest", botEvaluationResult.getFullRequest());
                 put("created", DateUtil.currentDateTimeUtcForMysql());
@@ -57,13 +53,33 @@ public class RegistrationRepository {
 
     public Optional<Registration> findRegistration(UUID registrationId) {
         return Optional.ofNullable(DataAccessUtils.singleResult(
-                namedParameterJdbcTemplate.query("SELECT * FROM obaportal.customer_registration WHERE id = :registrationId",
+                namedParameterJdbcTemplate.query("SELECT * FROM obaportal.registration WHERE id = :id",
                         new HashMap<String, Object>() {
                             {
-                                put("registrationId", registrationId.toString());
+                                put("id", registrationId.toString());
                             }
-                        }, (rs, rowNum) -> new Registration(UUID.fromString(rs.getString("id")), rs.getString("first_name"),
-                                rs.getString("last_name"), rs.getString("company_name"), rs.getString("email"),
+                        }, (rs, rowNum) -> new Registration(
+                                UUID.fromString(rs.getString("id")),
+                                UUID.fromString(rs.getString("cognito_user_id")),
+                                rs.getString("organization_name"),
+                                rs.getString("promoted_to_organization") == null ? null :
+                                        UUID.fromString(rs.getString("promoted_to_organization")),
+                                DateUtil.mysqlUtcDateTimeToOffsetDateTime(rs.getString("created"))))));
+    }
+
+    public Optional<Registration> findRegistrationByCognitoId(String cognitoId) {
+        return Optional.ofNullable(DataAccessUtils.singleResult(
+                namedParameterJdbcTemplate.query("SELECT * FROM obaportal.registration WHERE cognito_user_id = :cognitoId",
+                        new HashMap<String, Object>() {
+                            {
+                                put("cognitoId", cognitoId);
+                            }
+                        }, (rs, rowNum) -> new Registration(
+                                UUID.fromString(rs.getString("id")),
+                                UUID.fromString(rs.getString("cognito_user_id")),
+                                rs.getString("organization_name"),
+                                rs.getString("promoted_to_organization") == null ? null :
+                                        UUID.fromString(rs.getString("promoted_to_organization")),
                                 DateUtil.mysqlUtcDateTimeToOffsetDateTime(rs.getString("created"))))));
     }
 

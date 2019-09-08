@@ -14,9 +14,12 @@ import java.util.UUID;
 @NoArgsConstructor
 public class Registration {
     private UUID id;
-    private String firstName;
-    private String lastName;
-    private String companyName;
-    private String email;
+    private UUID cognitoUserId;
+    private String organizationName;
+    private UUID promotedToOrganization;
     private OffsetDateTime created;
+
+    public boolean isPromotedToOrganisation() {
+        return promotedToOrganization != null;
+    }
 }
