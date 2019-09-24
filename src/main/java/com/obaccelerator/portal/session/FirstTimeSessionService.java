@@ -39,8 +39,9 @@ public class FirstTimeSessionService {
         if (registrationOptional.isPresent()) {
             Registration registration = registrationOptional.get();
             if (!registration.isPromotedToOrganisation()) {
-                // Create the organization and the user
+                // Create the organization
                 Organization organization = organizationService.createFromRegistration(registration);
+                // Create the portal user
                 return portalUserService.createPortalUser(cognitoId, organization.getId());
             } else {
                 throw new RuntimeException("Found registration that is already linked to an organization for a first-time user. This should never happen.");

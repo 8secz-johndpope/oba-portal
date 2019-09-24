@@ -49,6 +49,9 @@ public class ObaPortalProperties {
     @Value("${oba.base.url}")
     private String obaBaseUrl;
 
+    @Value("${log.requests.responses.on.error.for.organizations}")
+    private boolean logRequestsResponsesOnErrorForOrganizations;
+
     public String cognitoPublicKeysUrl() {
         return String.format("https://cognito-idp.%s.amazonaws.com/%s/.well-known/jwks.json", cognitoAwsRegion, cognitoUserPoolId);
     }

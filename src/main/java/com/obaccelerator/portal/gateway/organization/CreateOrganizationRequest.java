@@ -11,6 +11,6 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class CreateOrganisationRequest {
+public class CreateOrganizationRequest {
     private UUID id;
 }

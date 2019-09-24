@@ -32,6 +32,15 @@ public class OrganizationRepository {
         return id;
     }
 
+    public void deleteOrganization(UUID id) {
+        namedParameterJdbcTemplate.update("DELETE FROM obaportal.organization WHERE id = :id", new HashMap<String, Object>() {
+                    {
+                        put("id", id.toString());
+                    }
+                }
+        );
+    }
+
     public UUID updateOrganization(String name, String vatNumber, String street, String streetNumber) {
         UUID id = UUID.randomUUID();
         namedParameterJdbcTemplate.update("UPDATE obaportal.organization SET name = :name, vat_number = :vatNumber, " +
