@@ -30,6 +30,8 @@ build/
 ### VS Code ###
 .vscode/
 
+.pfx
+
 
 *.log
 
