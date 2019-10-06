@@ -30,9 +30,6 @@ build/
 ### VS Code ###
 .vscode/
 
-.log
-
-
 *.log
 
 .mvn/wrapper/
