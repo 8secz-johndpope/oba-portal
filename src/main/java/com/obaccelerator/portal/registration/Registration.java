@@ -1,5 +1,6 @@
 package com.obaccelerator.portal.registration;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,7 +20,8 @@ public class Registration {
     private UUID promotedToOrganization;
     private OffsetDateTime created;
 
-    public boolean isPromotedToOrganisation() {
+    @JsonIgnore
+    public boolean isPromotedToOrganizationWithId() {
         return promotedToOrganization != null;
     }
 }

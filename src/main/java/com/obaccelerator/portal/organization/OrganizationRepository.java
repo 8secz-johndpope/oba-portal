@@ -19,17 +19,15 @@ public class OrganizationRepository {
         this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
     }
 
-    public UUID createOrganization(String name) {
-        UUID id = UUID.randomUUID();
+    public void createOrganization(UUID newId, String name) {
         namedParameterJdbcTemplate.update("INSERT INTO obaportal.organization (id, name, created) " +
-                "VALUES (:id, :name, :created)", new MapSqlParameterSource(new HashMap<String, Object>() {
+                "VALUES (UUID_TO_BIN(:id), :name, :created)", new MapSqlParameterSource(new HashMap<String, Object>() {
             {
-                put("id", id.toString());
+                put("id", newId.toString());
                 put("name", name);
                 put("created", DateUtil.currentDateTimeUtcForMysql());
             }
         }));
-        return id;
     }
 
     public void deleteOrganization(UUID id) {
@@ -55,17 +53,21 @@ public class OrganizationRepository {
         return id;
     }
 
-    public Optional<Organization> findOrganization(UUID id) {
-        return Optional.ofNullable(DataAccessUtils.singleResult(
-                namedParameterJdbcTemplate.query("SELECT * FROM obaportal.organization WHERE id = :id",
+    public Organization findOrganization(UUID id) {
+        return DataAccessUtils.singleResult(
+                namedParameterJdbcTemplate.query("SELECT BIN_TO_UUID(organization.id) as realId, organization.* FROM " +
+                                "obaportal.organization WHERE id = UUID_TO_BIN(:id)",
                         new HashMap<String, Object>() {
                             {
                                 put("id", id.toString());
                             }
-                        }, (rs, rowNum) -> new Organization(UUID.fromString(rs.getString("id")),
-                                rs.getString("name"), rs.getString("vat_number"), rs.getString("street"),
+                        }, (rs, rowNum) -> new Organization(
+                                UUID.fromString(rs.getString("realId")),
+                                rs.getString("name"),
+                                rs.getString("vat_number"),
+                                rs.getString("street"),
                                 rs.getString("street_number"),
-                                DateUtil.mysqlUtcDateTimeToOffsetDateTime(rs.getString("created"))))));
+                                DateUtil.mysqlUtcDateTimeToOffsetDateTime(rs.getString("created")))));
     }
 }
 

@@ -11,7 +11,7 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 public class PortalUser {
-    private int id;
+    private UUID id;
     private String cognitoUserId;
     private UUID organizationId;
     private OffsetDateTime firstLogin;

@@ -1,7 +1,8 @@
 package com.obaccelerator.portal.registration;
 
-import com.obaccelerator.common.error.EntityNotFoundException;
+import com.obaccelerator.common.error.EntityNotFoundAfterInsertException;
 import com.obaccelerator.portal.BotEvaluationResult;
+import com.obaccelerator.portal.id.UuidRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,23 +15,27 @@ import java.util.UUID;
 public class RegistrationService {
 
     private RegistrationRepository registrationRepository;
+    private UuidRepository uuidRepository;
 
-    public RegistrationService(final RegistrationRepository registrationRepository) {
+    public RegistrationService(final RegistrationRepository registrationRepository, UuidRepository uuidRepository) {
         this.registrationRepository = registrationRepository;
+        this.uuidRepository = uuidRepository;
     }
 
     @Transactional
     public Registration createRegistration(RegistrationRequest registrationRequest, BotEvaluationResult botEvaluationResult) {
         isAlreadyRegistered(registrationRequest);
-        UUID id = registrationRepository.createRegistration(registrationRequest.getCognitoUserId(), registrationRequest.getOrganizationName(), botEvaluationResult);
-        return registrationRepository.findRegistration(id).orElseThrow(() -> new EntityNotFoundException(Registration.class));
+        UUID uuid = uuidRepository.newId();
+        registrationRepository.createRegistration(uuid, registrationRequest.getCognitoUserId(), registrationRequest.getOrganizationName(), botEvaluationResult);
+        return registrationRepository.findRegistration(uuid).orElseThrow(() -> new EntityNotFoundAfterInsertException(uuid));
     }
 
     @Transactional
     public Registration createRegistration(RegistrationRequest registrationRequest) {
         isAlreadyRegistered(registrationRequest);
-        UUID id = registrationRepository.createRegistration(registrationRequest.getCognitoUserId(), registrationRequest.getOrganizationName());
-        return registrationRepository.findRegistration(id).get();
+        UUID uuid = uuidRepository.newId();
+        registrationRepository.createRegistration(uuid, registrationRequest.getCognitoUserId(), registrationRequest.getOrganizationName());
+        return registrationRepository.findRegistration(uuid).get();
     }
 
     public Optional<Registration> findRegistrationByCognitoId(String cognitoId) {
@@ -38,6 +43,13 @@ public class RegistrationService {
     }
 
     private void isAlreadyRegistered(RegistrationRequest registrationRequest) {
+        Optional<Registration> registrationByEmailOptional = registrationRepository.findRegistrationByCognitoId(registrationRequest.getEmail());
+        if (registrationByEmailOptional.isPresent()) {
+            throw new RegistrationAlreadyExistsException();
+        }
+    }
+
+    private void entityExists(RegistrationRequest registrationRequest) {
         Optional<Registration> registrationByEmailOptional = registrationRepository.findRegistrationByCognitoId(registrationRequest.getEmail());
         if (registrationByEmailOptional.isPresent()) {
             throw new RegistrationAlreadyExistsException();

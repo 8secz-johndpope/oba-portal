@@ -19,28 +19,24 @@ public class RegistrationRepository {
         this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
     }
 
-    public UUID createRegistration(String cognitoId, String organizationName) {
-        UUID uuid = UUID.randomUUID();
-        String id = uuid.toString();
+    public void createRegistration(UUID newId, String cognitoId, String organizationName) {
         namedParameterJdbcTemplate.update("INSERT INTO obaportal.registration (id, cognito_user_id, organization_name, created) " +
-                "VALUES (:id, :cognitoId, :organizationName, :created)", new HashMap<String, Object>() {
+                "VALUES (UUID_TO_BIN(:newId), :cognitoId, :organizationName, :created)", new HashMap<String, Object>() {
             {
-                put("id", id);
+                put("newId", newId.toString());
                 put("cognitoId", cognitoId);
                 put("organizationName", organizationName);
                 put("created", DateUtil.currentDateTimeUtcForMysql());
             }
         });
-        return uuid;
     }
 
-    public UUID createRegistration(String cognitoId, String organizationName, BotEvaluationResult botEvaluationResult) {
-        UUID uuid = UUID.randomUUID();
+    public void createRegistration(UUID newId, String cognitoId, String organizationName, BotEvaluationResult botEvaluationResult) {
         namedParameterJdbcTemplate.update("INSERT INTO obaportal.registration (id, cognito_user_id, organization_name, " +
                 "likely_a_bot, full_request, created) " +
-                "VALUES (:id, :cognitoId, :organizationName, :likelyABot, :fullRequest, :created)", new HashMap<String, Object>() {
+                "VALUES (UUID_TO_BIN(:newId), :cognitoId, :organizationName, :likelyABot, :fullRequest, :created)", new HashMap<String, Object>() {
             {
-                put("id", uuid.toString());
+                put("newId", newId.toString());
                 put("cognitoId", cognitoId);
                 put("organizationName", organizationName);
                 put("likelyABot", botEvaluationResult.isLikelyABot());
@@ -48,18 +44,17 @@ public class RegistrationRepository {
                 put("created", DateUtil.currentDateTimeUtcForMysql());
             }
         });
-        return uuid;
     }
 
     public Optional<Registration> findRegistration(UUID registrationId) {
         return Optional.ofNullable(DataAccessUtils.singleResult(
-                namedParameterJdbcTemplate.query("SELECT * FROM obaportal.registration WHERE id = :id",
+                namedParameterJdbcTemplate.query("SELECT  registration.*, BIN_TO_UUID(id) as realId FROM obaportal.registration WHERE id = UUID_TO_BIN(:id)",
                         new HashMap<String, Object>() {
                             {
                                 put("id", registrationId.toString());
                             }
                         }, (rs, rowNum) -> new Registration(
-                                UUID.fromString(rs.getString("id")),
+                                UUID.fromString(rs.getString("realId")),
                                 UUID.fromString(rs.getString("cognito_user_id")),
                                 rs.getString("organization_name"),
                                 rs.getString("promoted_to_organization") == null ? null :
@@ -69,13 +64,13 @@ public class RegistrationRepository {
 
     public Optional<Registration> findRegistrationByCognitoId(String cognitoId) {
         return Optional.ofNullable(DataAccessUtils.singleResult(
-                namedParameterJdbcTemplate.query("SELECT * FROM obaportal.registration WHERE cognito_user_id = :cognitoId",
+                namedParameterJdbcTemplate.query("SELECT registration.*, BIN_TO_UUID(id) as realId FROM registration WHERE cognito_user_id = :cognitoId",
                         new HashMap<String, Object>() {
                             {
                                 put("cognitoId", cognitoId);
                             }
                         }, (rs, rowNum) -> new Registration(
-                                UUID.fromString(rs.getString("id")),
+                                UUID.fromString(rs.getString("realId")),
                                 UUID.fromString(rs.getString("cognito_user_id")),
                                 rs.getString("organization_name"),
                                 rs.getString("promoted_to_organization") == null ? null :

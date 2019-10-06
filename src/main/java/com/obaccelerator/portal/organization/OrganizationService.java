@@ -2,9 +2,9 @@ package com.obaccelerator.portal.organization;
 
 import com.obaccelerator.common.error.EntityNotFoundException;
 import com.obaccelerator.portal.gateway.organization.OrganizationObaGatewayService;
+import com.obaccelerator.portal.id.UuidRepository;
 import com.obaccelerator.portal.registration.Registration;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -12,13 +12,16 @@ import java.util.UUID;
 @Service
 public class OrganizationService {
 
-    private OrganizationObaGatewayService organizationGatewayService;
+    private OrganizationObaGatewayService organizationObaGatewayService;
     private OrganizationRepository organizationRepository;
+    private UuidRepository uuidRepository;
 
-    public OrganizationService(OrganizationObaGatewayService organizationGatewayService,
-                               OrganizationRepository organizationRepository) {
-        this.organizationGatewayService = organizationGatewayService;
+    public OrganizationService(OrganizationObaGatewayService organizationObaGatewayService,
+                               OrganizationRepository organizationRepository,
+                               UuidRepository uuidRepository) {
+        this.organizationObaGatewayService = organizationObaGatewayService;
         this.organizationRepository = organizationRepository;
+        this.uuidRepository = uuidRepository;
     }
 
     // TODO: architecture : this first creates the organization in the portal, then in OBA.
@@ -26,19 +29,20 @@ public class OrganizationService {
     //  in order to prevent useless organization in the database. The organization should first be created in OBA. Only if that
     //  succeeds it must be created in OBA Portal.
     // @Transactional
-    // TODO: Organization is automatically rolled back. Why?
+    // TODO: Organization is automatically rolled back, even without Transactional annotation. Why?
     public Organization createFromRegistration(Registration registration) {
-        UUID organizationId = organizationRepository.createOrganization(registration.getOrganizationName());
-        organizationGatewayService.createOrganization(organizationId);
-        return organizationRepository.findOrganization(organizationId).get();
+        UUID uuid = uuidRepository.newId();
+        organizationRepository.createOrganization(uuid, registration.getOrganizationName());
+        organizationObaGatewayService.createOrganization(uuid);
+        return organizationRepository.findOrganization(uuid);
     }
 
     public Organization findOrganization(UUID id) {
-        Optional<Organization> organizationOptional = organizationRepository.findOrganization(id);
-        if (!organizationOptional.isPresent()) {
+        Organization organization = organizationRepository.findOrganization(id);
+        if (organization == null) {
             throw new EntityNotFoundException(Organization.class);
         }
-        return organizationOptional.get();
+        return organization;
     }
 
 }

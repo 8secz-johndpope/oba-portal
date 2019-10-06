@@ -23,31 +23,32 @@ public class PortalUserRepository {
 
     public Optional<PortalUser> findPortalUserByCognitoId(String cognitoId) {
         return Optional.ofNullable(DataAccessUtils.singleResult(
-                namedParameterJdbcTemplate.query("SELECT * FROM obaportal.portal_user WHERE cognito_user_id = :cognitoId",
+                namedParameterJdbcTemplate.query("SELECT BIN_TO_UUID(portal_user.id) as realId,  " +
+                                "BIN_TO_UUID(portal_user.organization_id) as realOrganizationId, portal_user.* " +
+                                "FROM obaportal.portal_user " +
+                                "WHERE cognito_user_id = :cognitoId",
                         new HashMap<String, Object>() {
                             {
                                 put("cognitoId", cognitoId);
                             }
-                        }, (rs, rowNum) -> new PortalUser(rs.getInt("id"), rs.getString("cognito_user_id"),
-                                UUID.fromString(rs.getString("organization_id")),
+                        }, (rs, rowNum) -> new PortalUser(
+                                UUID.fromString(rs.getString("realId")),
+                                rs.getString("cognito_user_id"),
+                                UUID.fromString(rs.getString("realOrganizationId")),
                                 DateUtil.mysqlUtcDateTimeToOffsetDateTime(rs.getString("first_login")),
                                 DateUtil.mysqlUtcDateTimeToOffsetDateTime(rs.getString("created"))))));
     }
 
-    public int createPortalUser(String cognitoUserId, UUID organizationId) {
-        KeyHolder keyHolder = new GeneratedKeyHolder();
+    public void createPortalUser(UUID newId, String cognitoUserId, UUID organizationId) {
         MapSqlParameterSource parameterSource = new MapSqlParameterSource(new HashMap<String, Object>() {
             {
+                put("portalUserId", newId.toString());
                 put("cognitoUserId", cognitoUserId);
                 put("organizationId", organizationId.toString());
                 put("created", DateUtil.currentDateTimeUtcForMysql());
             }
         });
-
-        namedParameterJdbcTemplate.update("INSERT INTO obaportal.portal_user (cognito_user_id, organization_id, created) " +
-                "VALUES (:cognitoUserId,:organizationId, :created)", parameterSource, keyHolder);
-
-
-        return keyHolder.getKey().intValue();
+        namedParameterJdbcTemplate.update("INSERT INTO obaportal.portal_user (id, cognito_user_id, organization_id, created) " +
+                "VALUES (UUID_TO_BIN(:portalUserId), :cognitoUserId, UUID_TO_BIN(:organizationId), :created)", parameterSource);
     }
 }

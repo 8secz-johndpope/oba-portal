@@ -10,6 +10,9 @@ import org.springframework.context.annotation.Configuration;
 public class TlsConfig {
 
     /**
+     * Specifies how the server treats clients. There is a server keystore that holds a server certificate, but
+     * no trust store, because there is a frontend / web browser connecting, no some other system.
+     *
      * OBA portal uses one-way TLS towards the client
      * @param properties
      * @return
@@ -18,7 +21,8 @@ public class TlsConfig {
     public ServletWebServerFactory servletContainer(ObaPortalProperties properties) {
         TomcatServletWebServerFactory tomcat = new TomcatServletWebServerFactory();
         Ssl ssl = new Ssl();
-        ssl.setKeyStore(properties.getClientTlsKeyStorePath());
+        String keyStoreFileSystemPath = getClass().getResource(properties.getClientTlsKeyStorePath()).getPath();
+        ssl.setKeyStore(keyStoreFileSystemPath);
         ssl.setKeyStorePassword(properties.getClientTlsKeystorePassword());
         ssl.setKeyPassword(properties.getClientTlsKeystorePassword());
         ssl.setKeyStoreType("PKCS12");

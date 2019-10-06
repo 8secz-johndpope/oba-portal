@@ -1,13 +1,12 @@
 package com.obaccelerator.portal.registration;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.obaccelerator.portal.BotEvaluationResult;
-import org.apache.commons.io.IOUtils;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.io.IOException;
 
@@ -16,18 +15,18 @@ import java.io.IOException;
 public class RegistrationController {
 
     private RegistrationService registrationService;
+    private ObjectMapper objectMapper = new ObjectMapper();
 
     public RegistrationController(final RegistrationService registrationService) {
         this.registrationService = registrationService;
     }
 
-    @PostMapping("/registrations")
-    public Registration postRegistration(@RequestBody @Valid RegistrationRequest registrationRequest, HttpServletRequest request) {
-        Registration registration = null;
+    @PostMapping(value = "/registrations")
+    public Registration postRegistration(@RequestBody @Valid RegistrationRequest registrationRequest) {
+        Registration registration;
         if(registrationRequest.isLikelyABotRequest()) {
             try {
-                String requestBody = IOUtils.toString(request.getReader());
-                BotEvaluationResult botEvaluationResult = new BotEvaluationResult(true, requestBody);
+                BotEvaluationResult botEvaluationResult = new BotEvaluationResult(true, objectMapper.writeValueAsString(registrationRequest));
                 registration = registrationService.createRegistration(registrationRequest, botEvaluationResult);
             } catch (IOException e) {
                 throw new RuntimeException(e);

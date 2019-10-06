@@ -19,24 +19,23 @@ public class SessionRepository {
         this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
     }
 
-    public UUID createSession(int portalUserId) {
-        UUID uuid = UUID.randomUUID();
+    public void createSession(UUID newId, UUID portalUserId) {
         String now = DateUtil.currentDateTimeUtcForMysql();
         namedParameterJdbcTemplate.update("INSERT INTO obaportal.session (id, portal_user_id, last_used, created) " +
-                "VALUES (:id, :portalUserId, :lastUsed, :created)", new MapSqlParameterSource(new HashMap<String, Object>() {
-            {
-                put("id", uuid.toString());
-                put("portalUserId", portalUserId);
-                put("lastUsed", now);
-                put("created", now);
-            }
-        }));
-        return uuid;
+                        "VALUES (UUID_TO_BIN(:newId), UUID_TO_BIN(:portalUserId), :lastUsed, :created)",
+                new MapSqlParameterSource(new HashMap<String, Object>() {
+                    {
+                        put("newId", newId.toString());
+                        put("portalUserId", portalUserId.toString());
+                        put("lastUsed", now);
+                        put("created", now);
+                    }
+                }));
     }
 
     public void updateSessionLastUsed(UUID sessionId) {
         String now = DateUtil.currentDateTimeUtcForMysql();
-        namedParameterJdbcTemplate.update("UPDATE obaportal.session SET last_used = :now WHERE id = :sessionId",
+        namedParameterJdbcTemplate.update("UPDATE obaportal.session SET last_used = :now WHERE id = UUID_TO_BIN(:sessionId)",
                 new MapSqlParameterSource(new HashMap<String, Object>() {
                     {
                         put("sessionId", sessionId.toString());
@@ -47,19 +46,22 @@ public class SessionRepository {
 
     public Optional<Session> findValidSession(UUID sessionId) {
         return Optional.ofNullable(DataAccessUtils.singleResult(
-                namedParameterJdbcTemplate.query("SELECT * FROM obaportal.session WHERE id = :sessionId",
+                namedParameterJdbcTemplate.query("SELECT BIN_TO_UUID(id) as realId, * " +
+                                "FROM obaportal.session " +
+                                "WHERE id = UUID_TO_BIN(:sessionId)",
                         new HashMap<String, Object>() {
                             {
                                 put("id", sessionId.toString());
                             }
                         }, (rs, rowNum) -> new Session(
-                                UUID.fromString(rs.getString("id")),
+                                UUID.fromString(rs.getString("realId")),
                                 DateUtil.mysqlUtcDateTimeToOffsetDateTime(rs.getString("last_used")),
                                 DateUtil.mysqlUtcDateTimeToOffsetDateTime(rs.getString("created"))))));
     }
 
     public void deleteSession(UUID sessionId) {
-        namedParameterJdbcTemplate.update("DELETE FROM obaportal.session WHERE id = :sessionId", new HashMap<String, Object>() {
+        namedParameterJdbcTemplate.update("DELETE FROM obaportal.session WHERE id = UUID_TO_BIN(:sessionId)",
+                new HashMap<String, Object>() {
                     {
                         put("sessionId", sessionId.toString());
                     }

@@ -33,16 +33,20 @@ public class SessionController {
 
     @PostMapping("/sessions")
     public void cognitoTokenToSession(@Valid @RequestBody CognitoIdToken cognitoToken, HttpServletResponse response) {
-        // Validate the Cognito token and get its claims
+        // Validate the Cognito token signature and get its claims
         Map<String, Object> tokenClaims = cognitoService.verifyAndGetCognitoClaims(cognitoToken);
 
         String cognitoId = tokenClaims.get("sub").toString();
         Optional<PortalUser> portalUserOptional = portalUserService.findByCognitoId(cognitoId);
+
+        // The user has successfully authenticated with Cognito and OBA was able to identify the user, so
+        // we return a session cookie
         if (portalUserOptional.isPresent()) {
             setSessionCookie(portalUserOptional.get(), response);
             return;
         }
 
+        // If OBA does not know the user yet we should look for a registration and promote it to an organization
         PortalUser portalUser = firstTimeSessionService.promoteRegistrationToOrganizationWithUser(tokenClaims);
         setSessionCookie(portalUser, response);
     }

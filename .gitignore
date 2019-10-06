@@ -35,5 +35,6 @@ build/
 
 
 *.log
+*.pfx
 
 .mvn/wrapper/

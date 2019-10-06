@@ -1,5 +1,6 @@
 package com.obaccelerator.portal.session;
 
+import com.obaccelerator.portal.id.UuidRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -9,13 +10,17 @@ import java.util.UUID;
 public class SessionService {
 
     private SessionRepository sessionRepository;
+    private UuidRepository uuidRepository;
 
-    public SessionService(SessionRepository sessionRepository) {
+    public SessionService(SessionRepository sessionRepository, UuidRepository uuidRepository) {
         this.sessionRepository = sessionRepository;
+        this.uuidRepository = uuidRepository;
     }
 
-    public UUID createSession(int portalUserId) {
-        return sessionRepository.createSession(portalUserId);
+    public UUID createSession(UUID portalUserId) {
+        UUID uuid = uuidRepository.newId();
+        sessionRepository.createSession(uuid, portalUserId);
+        return uuid;
     }
 
     public void updateSessionLastUsed(UUID sessionId) {
