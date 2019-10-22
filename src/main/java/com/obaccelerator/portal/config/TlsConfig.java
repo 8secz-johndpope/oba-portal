@@ -4,9 +4,11 @@ import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactor
 import org.springframework.boot.web.server.Ssl;
 import org.springframework.boot.web.servlet.server.ServletWebServerFactory;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
-@Configuration
+/**
+ * HTTP for now. It is behind nginx which does HTTPS
+ */
+//@Configuration
 public class TlsConfig {
 
     /**

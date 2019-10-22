@@ -20,10 +20,11 @@ public class OrganizationRepository {
     }
 
     public void createOrganization(UUID newId, String name) {
-        namedParameterJdbcTemplate.update("INSERT INTO obaportal.organization (id, name, created) " +
-                "VALUES (UUID_TO_BIN(:id), :name, :created)", new MapSqlParameterSource(new HashMap<String, Object>() {
+        namedParameterJdbcTemplate.update("INSERT INTO obaportal.organization (id, id_plain, name, created) " +
+                "VALUES (UUID_TO_BIN(:id), :idPlain, :name, :created)", new MapSqlParameterSource(new HashMap<String, Object>() {
             {
                 put("id", newId.toString());
+                put("idPlain", newId.toString());
                 put("name", name);
                 put("created", DateUtil.currentDateTimeUtcForMysql());
             }

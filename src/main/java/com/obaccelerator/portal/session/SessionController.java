@@ -1,6 +1,5 @@
 package com.obaccelerator.portal.session;
 
-
 import com.obaccelerator.portal.cognito.CognitoService;
 import com.obaccelerator.portal.portaluser.PortalUser;
 import com.obaccelerator.portal.portaluser.PortalUserService;
@@ -55,7 +54,7 @@ public class SessionController {
     private void setSessionCookie(PortalUser portalUser, HttpServletResponse response) {
         UUID session = sessionService.createSession(portalUser.getId());
         Cookie cookie = new Cookie("oba_portal_session", session.toString());
+        cookie.setDomain("localhost");
         response.addCookie(cookie);
     }
-
 }

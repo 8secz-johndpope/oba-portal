@@ -27,7 +27,8 @@ public class FirstTimeSessionService {
     private OrganizationService organizationService;
     private PortalUserService portalUserService;
 
-    public FirstTimeSessionService(RegistrationService registrationService, OrganizationService organizationService, PortalUserService portalUserService) {
+    public FirstTimeSessionService(RegistrationService registrationService, OrganizationService organizationService,
+                                   PortalUserService portalUserService) {
         this.registrationService = registrationService;
         this.organizationService = organizationService;
         this.portalUserService = portalUserService;
@@ -46,7 +47,8 @@ public class FirstTimeSessionService {
                 // Create the portal user
                 return portalUserService.createPortalUserForCognitoUser(cognitoId, organization.getId());
             } else {
-                throw new RuntimeException("Found registration that is already linked to an organization for a first-time user. This should never happen.");
+                throw new RuntimeException("Found registration that is already linked to an organization for a " +
+                        "first-time user. This should never happen.");
             }
         } else {
             throw new RuntimeException("Could not find registration for first-time user. This can only happen if a " +

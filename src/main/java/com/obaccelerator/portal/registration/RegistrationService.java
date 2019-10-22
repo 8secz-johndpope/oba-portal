@@ -26,7 +26,8 @@ public class RegistrationService {
     public Registration createRegistration(RegistrationRequest registrationRequest, BotEvaluationResult botEvaluationResult) {
         isAlreadyRegistered(registrationRequest);
         UUID uuid = uuidRepository.newId();
-        registrationRepository.createRegistration(uuid, registrationRequest.getCognitoUserId(), registrationRequest.getOrganizationName(), botEvaluationResult);
+        registrationRepository.createRegistration(uuid, registrationRequest.getCognitoUserId(),
+                registrationRequest.getOrganizationName(), botEvaluationResult);
         return registrationRepository.findRegistration(uuid).orElseThrow(() -> new EntityNotFoundAfterInsertException(uuid));
     }
 
@@ -48,13 +49,4 @@ public class RegistrationService {
             throw new RegistrationAlreadyExistsException();
         }
     }
-
-    private void entityExists(RegistrationRequest registrationRequest) {
-        Optional<Registration> registrationByEmailOptional = registrationRepository.findRegistrationByCognitoId(registrationRequest.getEmail());
-        if (registrationByEmailOptional.isPresent()) {
-            throw new RegistrationAlreadyExistsException();
-        }
-    }
-
-
 }

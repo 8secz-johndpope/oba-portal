@@ -11,26 +11,24 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 @EnableGlobalMethodSecurity(securedEnabled = true)
 public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
-
-
     @Override
     protected void configure(final HttpSecurity http) throws Exception {
         http
                 .csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/style.css",
+                .antMatchers(
+                        "/style.css",
                         "/ubuntu-c-webfont.woff2",
                         "/ubuntu-c-webfont.woff",
                         "/portal-logo.png",
                         "/signup",
                         "/pages/**",
+                        "/app/**",
                         "/registrations/**",
                         "/sessions/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()
-                .loginPage("/login").permitAll();
+                .loginPage("https://localhost/login").permitAll();
     }
-
-
 }
