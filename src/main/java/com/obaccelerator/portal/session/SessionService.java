@@ -1,5 +1,7 @@
 package com.obaccelerator.portal.session;
 
+import com.obaccelerator.common.error.EntityNotFoundException;
+import com.obaccelerator.common.uuid.UUIDParser;
 import com.obaccelerator.portal.id.UuidRepository;
 import org.springframework.stereotype.Service;
 
@@ -17,18 +19,25 @@ public class SessionService {
         this.uuidRepository = uuidRepository;
     }
 
-    public UUID createSession(UUID portalUserId) {
+    UUID createSession(UUID portalUserId) {
         UUID uuid = uuidRepository.newId();
         sessionRepository.createSession(uuid, portalUserId);
         return uuid;
     }
 
-    public void updateSessionLastUsed(UUID sessionId) {
-        sessionRepository.updateSessionLastUsed(sessionId);
+    Session findActiveSession(String sessionId) {
+        if(sessionId != null) {
+            Optional<Session> activeSession = sessionRepository.findActiveSession(UUIDParser.fromString(sessionId));
+            if(activeSession.isPresent()) {
+                sessionRepository.updateSessionLastUsed(UUIDParser.fromString(sessionId));
+                return activeSession.get();
+            }
+        }
+        throw new EntityNotFoundException(Session.class, UUID.fromString(sessionId));
     }
 
-    public Optional<Session> findValidSession(UUID sessionId) {
-        return sessionRepository.findValidSession(sessionId);
+    public void updateSessionLastUsed(UUID sessionId) {
+        sessionRepository.updateSessionLastUsed(sessionId);
     }
 
     public void deleteSession(UUID sessionId) {

@@ -1,16 +1,14 @@
-package com.obaccelerator.portal.gateway.organization;
+package com.obaccelerator.portal.organization;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.UUID;
-
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class CreateOrganizationRequest {
-    private UUID id;
+class CreateOrganizationRequest {
+    private String organizationName;
 }

@@ -29,6 +29,7 @@ public class SessionRepository {
                         put("portalUserId", portalUserId.toString());
                         put("lastUsed", now);
                         put("created", now);
+
                     }
                 }));
     }
@@ -44,14 +45,15 @@ public class SessionRepository {
                 }));
     }
 
-    public Optional<Session> findValidSession(UUID sessionId) {
+    public Optional<Session> findActiveSession(UUID sessionId) {
         return Optional.ofNullable(DataAccessUtils.singleResult(
-                namedParameterJdbcTemplate.query("SELECT BIN_TO_UUID(id) as realId, * " +
+                namedParameterJdbcTemplate.query("SELECT BIN_TO_UUID(id) realId, session.* " +
                                 "FROM obaportal.session " +
-                                "WHERE id = UUID_TO_BIN(:sessionId)",
+                                "WHERE id = UUID_TO_BIN(:sessionId) " +
+                                "AND last_used > NOW() - INTERVAL 30 MINUTE",
                         new HashMap<String, Object>() {
                             {
-                                put("id", sessionId.toString());
+                                put("sessionId", sessionId.toString());
                             }
                         }, (rs, rowNum) -> new Session(
                                 UUID.fromString(rs.getString("realId")),

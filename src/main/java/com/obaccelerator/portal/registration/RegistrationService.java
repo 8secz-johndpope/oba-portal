@@ -49,4 +49,8 @@ public class RegistrationService {
             throw new RegistrationAlreadyExistsException();
         }
     }
+
+    public void setOrganizatioIdForRegistration(UUID registrationId, UUID obaOrganizationId) {
+        registrationRepository.setOrganizationId(registrationId, obaOrganizationId);
+    }
 }

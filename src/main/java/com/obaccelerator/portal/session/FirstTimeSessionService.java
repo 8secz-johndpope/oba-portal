@@ -1,7 +1,8 @@
 package com.obaccelerator.portal.session;
 
+import com.obaccelerator.portal.organization.ObaOrganization;
 import com.obaccelerator.portal.organization.Organization;
-import com.obaccelerator.portal.organization.OrganizationService;
+import com.obaccelerator.portal.organization.OrganizationObaGatewayService;
 import com.obaccelerator.portal.portaluser.PortalUser;
 import com.obaccelerator.portal.portaluser.PortalUserService;
 import com.obaccelerator.portal.registration.Registration;
@@ -14,8 +15,8 @@ import java.util.Optional;
 
 
 /**
- * This service creates an organization based on a registration, a user and then links the registration to the
- * organization, so that we can later still see the registration was promoted to an organization.
+ * This service creates an organization in OBA based on a registration in OBA Portal, a user and then links the
+ * registration to the organization, so that we can later still see the registration was promoted to an organization.
  *
  * A registration is promoted to an organization when the user first logs in, so we know a valid user is registered
  * in Cognito.
@@ -24,13 +25,14 @@ import java.util.Optional;
 public class FirstTimeSessionService {
 
     private RegistrationService registrationService;
-    private OrganizationService organizationService;
+    private OrganizationObaGatewayService organizationObaGatewayService;
     private PortalUserService portalUserService;
 
-    public FirstTimeSessionService(RegistrationService registrationService, OrganizationService organizationService,
+    public FirstTimeSessionService(RegistrationService registrationService,
+                                   OrganizationObaGatewayService organizationObaGatewayService,
                                    PortalUserService portalUserService) {
         this.registrationService = registrationService;
-        this.organizationService = organizationService;
+        this.organizationObaGatewayService = organizationObaGatewayService;
         this.portalUserService = portalUserService;
     }
 
@@ -43,7 +45,10 @@ public class FirstTimeSessionService {
             Registration registration = registrationOptional.get();
             if (!registration.isPromotedToOrganizationWithId()) {
                 // Create the organization
-                Organization organization = organizationService.createFromRegistration(registration);
+                ObaOrganization organization = organizationObaGatewayService.createOrganization(registration);
+                // Update the registration with the organization id, so we can track which registration turned into
+                // organizations
+                registrationService.setOrganizatioIdForRegistration(registration.getId(), organization.getId());
                 // Create the portal user
                 return portalUserService.createPortalUserForCognitoUser(cognitoId, organization.getId());
             } else {

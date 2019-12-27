@@ -19,7 +19,7 @@ public class RegistrationRepository {
         this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
     }
 
-    public void createRegistration(UUID newId, String cognitoId, String organizationName) {
+    void createRegistration(UUID newId, String cognitoId, String organizationName) {
         namedParameterJdbcTemplate.update("INSERT INTO obaportal.registration (id, cognito_user_id, organization_name, created) " +
                 "VALUES (UUID_TO_BIN(:newId), :cognitoId, :organizationName, :created)", new HashMap<String, Object>() {
             {
@@ -31,7 +31,7 @@ public class RegistrationRepository {
         });
     }
 
-    public void createRegistration(UUID newId, String cognitoId, String organizationName, BotEvaluationResult botEvaluationResult) {
+    void createRegistration(UUID newId, String cognitoId, String organizationName, BotEvaluationResult botEvaluationResult) {
         namedParameterJdbcTemplate.update("INSERT INTO obaportal.registration (id, cognito_user_id, organization_name, " +
                 "likely_a_bot, full_request, created) " +
                 "VALUES (UUID_TO_BIN(:newId), :cognitoId, :organizationName, :likelyABot, :fullRequest, :created)", new HashMap<String, Object>() {
@@ -46,7 +46,7 @@ public class RegistrationRepository {
         });
     }
 
-    public Optional<Registration> findRegistration(UUID registrationId) {
+    Optional<Registration> findRegistration(UUID registrationId) {
         return Optional.ofNullable(DataAccessUtils.singleResult(
                 namedParameterJdbcTemplate.query("SELECT  registration.*, BIN_TO_UUID(id) as realId FROM obaportal.registration WHERE id = UUID_TO_BIN(:id)",
                         new HashMap<String, Object>() {
@@ -62,7 +62,7 @@ public class RegistrationRepository {
                                 DateUtil.mysqlUtcDateTimeToOffsetDateTime(rs.getString("created"))))));
     }
 
-    public Optional<Registration> findRegistrationByCognitoId(String cognitoId) {
+    Optional<Registration> findRegistrationByCognitoId(String cognitoId) {
         return Optional.ofNullable(DataAccessUtils.singleResult(
                 namedParameterJdbcTemplate.query("SELECT registration.*, BIN_TO_UUID(id) as realId FROM registration WHERE cognito_user_id = :cognitoId",
                         new HashMap<String, Object>() {
@@ -76,6 +76,14 @@ public class RegistrationRepository {
                                 rs.getString("promoted_to_organization") == null ? null :
                                         UUID.fromString(rs.getString("promoted_to_organization")),
                                 DateUtil.mysqlUtcDateTimeToOffsetDateTime(rs.getString("created"))))));
+    }
+
+    void setOrganizationId(UUID registrationId, UUID organizationId) {
+        namedParameterJdbcTemplate.update("UPDATE registration SET registration.promoted_to_organization = :organizationId " +
+                "WHERE registration.id = :registrationId", new HashMap<String, Object>() {{
+                    put("organizationId", organizationId);
+                    put("registrationId", registrationId);
+        }});
     }
 
 }

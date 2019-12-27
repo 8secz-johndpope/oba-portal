@@ -1,9 +1,9 @@
-package com.obaccelerator.portal.gateway.organization;
+package com.obaccelerator.portal.organization;
 
 import com.obaccelerator.common.endpoint.EndpointDef;
 import com.obaccelerator.common.http.*;
 import com.obaccelerator.portal.config.ObaPortalProperties;
-import com.obaccelerator.portal.session.ObaOrganization;
+import com.obaccelerator.portal.registration.Registration;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -22,12 +22,12 @@ public class OrganizationObaGatewayService {
         this.obaPortalProperties = obaPortalProperties;
     }
 
-    public ObaOrganization createOrganization(UUID uuid) {
+    public ObaOrganization createOrganization(Registration registration) {
 
-        RequestBuilder<UUID> requestBuilder = input -> {
+        RequestBuilder<CreateOrganizationRequest> requestBuilder = (input) -> {
             String url = obaPortalProperties.getObaBaseUrl() + EndpointDef.Path.POST_ORGANIZATIONS;
             HttpPost httpPost = new HttpPost(url);
-            JsonHttpEntity<CreateOrganizationRequest> entity = new JsonHttpEntity<>(new CreateOrganizationRequest(input));
+            JsonHttpEntity<CreateOrganizationRequest> entity = new JsonHttpEntity<>(input);
             httpPost.setEntity(entity);
             return httpPost;
         };
@@ -37,13 +37,13 @@ public class OrganizationObaGatewayService {
                 .addResponseValidator(new ExpectedHttpCodesValidator(201))
                 .logRequestResponsesOnError(obaPortalProperties.isLogRequestsResponsesOnErrorForOrganizations())
                 .build()
-                .execute(uuid);
+                .execute(new CreateOrganizationRequest(registration.getOrganizationName()));
     }
 
-    public ObaOrganization findOrganization(UUID id) {
+    ObaOrganization findOrganization(UUID id) {
 
         RequestBuilder<UUID> requestBuilder = input -> {
-            String url = obaPortalProperties.getObaBaseUrl() + EndpointDef.Path.GET_ORGANIZATIONS;
+            String url = obaPortalProperties.getObaBaseUrl() + EndpointDef.Path.GET_ORGANIZATIONS + "/" + id.toString();
             return new HttpGet(url);
         };
 
