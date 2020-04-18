@@ -34,3 +34,5 @@ build/
 /logs/
 
 .mvn/wrapper/
+
+spring-boot-logger.log
