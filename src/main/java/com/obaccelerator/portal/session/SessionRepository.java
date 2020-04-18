@@ -19,7 +19,7 @@ public class SessionRepository {
         this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
     }
 
-    public void createSession(UUID newId, UUID portalUserId) {
+    void createSession(UUID newId, UUID portalUserId) {
         String now = DateUtil.currentDateTimeUtcForMysql();
         namedParameterJdbcTemplate.update("INSERT INTO obaportal.session (id, portal_user_id, last_used, created) " +
                         "VALUES (UUID_TO_BIN(:newId), UUID_TO_BIN(:portalUserId), :lastUsed, :created)",
@@ -34,7 +34,7 @@ public class SessionRepository {
                 }));
     }
 
-    public void updateSessionLastUsed(UUID sessionId) {
+    void updateSessionLastUsed(UUID sessionId) {
         String now = DateUtil.currentDateTimeUtcForMysql();
         namedParameterJdbcTemplate.update("UPDATE obaportal.session SET last_used = :now WHERE id = UUID_TO_BIN(:sessionId)",
                 new MapSqlParameterSource(new HashMap<String, Object>() {
@@ -45,7 +45,7 @@ public class SessionRepository {
                 }));
     }
 
-    public Optional<Session> findActiveSession(UUID sessionId) {
+    Optional<Session> findActiveSession(UUID sessionId) {
         return Optional.ofNullable(DataAccessUtils.singleResult(
                 namedParameterJdbcTemplate.query("SELECT BIN_TO_UUID(id) realId, session.* " +
                                 "FROM obaportal.session " +
@@ -61,7 +61,7 @@ public class SessionRepository {
                                 DateUtil.mysqlUtcDateTimeToOffsetDateTime(rs.getString("created"))))));
     }
 
-    public void deleteSession(UUID sessionId) {
+    void deleteSession(UUID sessionId) {
         namedParameterJdbcTemplate.update("DELETE FROM obaportal.session WHERE id = UUID_TO_BIN(:sessionId)",
                 new HashMap<String, Object>() {
                     {

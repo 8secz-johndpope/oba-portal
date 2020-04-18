@@ -14,5 +14,4 @@ public class ObaPortalApplication {
     public static void main(String[] args) {
         SpringApplication.run(ObaPortalApplication.class, args);
     }
-
 }

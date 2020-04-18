@@ -1,9 +1,12 @@
 package com.obaccelerator.portal.session;
 
+import com.obaccelerator.common.uuid.UUIDParser;
 import com.obaccelerator.portal.cognito.CognitoService;
 import com.obaccelerator.portal.portaluser.PortalUser;
 import com.obaccelerator.portal.portaluser.PortalUserService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
@@ -12,6 +15,9 @@ import javax.validation.Valid;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+
+import static org.apache.commons.lang3.StringUtils.isBlank;
+
 
 @Slf4j
 @RestController
@@ -30,9 +36,20 @@ public class SessionController {
         this.firstTimeSessionService = firstTimeSessionService;
     }
 
+    /**
+     * Checks whether the user has a valid session cookie
+     *
+     * @param portalSessionId
+     * @return
+     */
     @GetMapping("/sessions")
-    public Session getActiveSession(@CookieValue(value = "oba_portal_session", required = false) String portalSessionId) {
-        return sessionService.findActiveSession(portalSessionId);
+    public ResponseEntity<Session> getActiveSession(@CookieValue(value = "oba_portal_session", required = false) String portalSessionId) {
+        if (isBlank(portalSessionId)) {
+            log.info("No session id present");
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+        log.info("Returning session");
+        return new ResponseEntity<>(sessionService.findActiveSession(portalSessionId), HttpStatus.OK);
     }
 
     @PostMapping("/sessions")
@@ -44,15 +61,16 @@ public class SessionController {
         Optional<PortalUser> portalUserOptional = portalUserService.findByCognitoId(cognitoId);
         PortalUser portalUser;
         // The user has successfully authenticated with Cognito and OBA was able to identify the user..
-        if (portalUserOptional.isPresent()) {
-            portalUser = portalUserOptional.get();
-        } else {
-            // If OBA does not know the user yet we should look for a registration and promote it to an organization
-            portalUser = firstTimeSessionService.promoteRegistrationToOrganizationWithUser(tokenClaims);
-        }
-
+        // If OBA does not know the user yet we should look for a registration and promote it to an organization
+        portalUser = portalUserOptional.orElseGet(() -> firstTimeSessionService.promoteRegistrationToOrganizationWithUser(tokenClaims));
         UUID session = sessionService.createSession(portalUser.getId());
         setSessionCookie(session, response);
+    }
+
+    @DeleteMapping
+    public void deleteSession(@CookieValue(value = "oba_portal_session", required = false) String portalSessionId) {
+        UUID uuid = UUIDParser.fromString(portalSessionId);
+        sessionService.deleteSession(uuid);
     }
 
     // TODO: Security : sign cookie content or use the Cognito token and verify signature

@@ -20,9 +20,6 @@ public class PageController {
     @GetMapping("/pages/{uniqueUrlName}")
     public ResponseEntity<Page> page(@PathVariable("uniqueUrlName") String uniqueUrlName) {
         Optional<Page> pageOptional = pageService.findPage(uniqueUrlName);
-        if (!pageOptional.isPresent()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<>(pageOptional.get(), HttpStatus.OK);
+        return pageOptional.map(page -> new ResponseEntity<>(page, HttpStatus.OK)).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 }

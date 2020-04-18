@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 import java.util.UUID;
 
+
 @Service
 public class SessionService {
 
@@ -26,21 +27,20 @@ public class SessionService {
     }
 
     Session findActiveSession(String sessionId) {
-        if(sessionId != null) {
-            Optional<Session> activeSession = sessionRepository.findActiveSession(UUIDParser.fromString(sessionId));
-            if(activeSession.isPresent()) {
-                sessionRepository.updateSessionLastUsed(UUIDParser.fromString(sessionId));
-                return activeSession.get();
-            }
+        Optional<Session> activeSession = sessionRepository.findActiveSession(UUIDParser.fromString(sessionId));
+        if (activeSession.isPresent()) {
+            sessionRepository.updateSessionLastUsed(UUIDParser.fromString(sessionId));
+            return activeSession.get();
+        } else {
+            throw new EntityNotFoundException(Session.class, UUID.fromString(sessionId));
         }
-        throw new EntityNotFoundException(Session.class, UUID.fromString(sessionId));
     }
 
     public void updateSessionLastUsed(UUID sessionId) {
         sessionRepository.updateSessionLastUsed(sessionId);
     }
 
-    public void deleteSession(UUID sessionId) {
+    void deleteSession(UUID sessionId) {
         sessionRepository.deleteSession(sessionId);
     }
 

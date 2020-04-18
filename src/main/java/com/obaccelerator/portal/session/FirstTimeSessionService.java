@@ -1,7 +1,6 @@
 package com.obaccelerator.portal.session;
 
 import com.obaccelerator.portal.organization.ObaOrganization;
-import com.obaccelerator.portal.organization.Organization;
 import com.obaccelerator.portal.organization.OrganizationObaGatewayService;
 import com.obaccelerator.portal.portaluser.PortalUser;
 import com.obaccelerator.portal.portaluser.PortalUserService;
