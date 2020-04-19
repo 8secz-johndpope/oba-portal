@@ -5,6 +5,7 @@ import com.obaccelerator.common.error.ObaError;
 import com.obaccelerator.common.error.ObaErrorMessage;
 import com.obaccelerator.portal.registration.RegistrationAlreadyExistsException;
 import com.obaccelerator.portal.session.InvalidCognitoTokenException;
+import com.obaccelerator.portal.shared.session.NoSessionException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -24,6 +25,12 @@ public class ObaPortalExceptionHandler extends ObaBaseExceptionHandler {
     public ResponseEntity<ObaErrorMessage> handleInvalidCognitoTokenException(InvalidCognitoTokenException e, WebRequest webRequest) {
         ObaErrorMessage errorMessage = new ObaErrorMessage(400, null, "Your message contained errors");
         errorMessage.addFieldErrors(collectBindingErrors(e));
+        return handle(errorMessage, e);
+    }
+
+    @ExceptionHandler(value = NoSessionException.class)
+    public ResponseEntity<ObaErrorMessage> handleMissingSessionException(InvalidCognitoTokenException e, WebRequest webRequest) {
+        ObaErrorMessage errorMessage = new ObaErrorMessage(ObaError.PORTAL_MISSING_SESSION);
         return handle(errorMessage, e);
     }
 

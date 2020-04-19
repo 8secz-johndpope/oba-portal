@@ -4,9 +4,8 @@ import com.obaccelerator.common.uuid.UUIDParser;
 import com.obaccelerator.portal.cognito.CognitoService;
 import com.obaccelerator.portal.portaluser.PortalUser;
 import com.obaccelerator.portal.portaluser.PortalUserService;
+import com.obaccelerator.portal.shared.session.SessionService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
@@ -15,8 +14,6 @@ import javax.validation.Valid;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
-
-import static org.apache.commons.lang3.StringUtils.isBlank;
 
 
 @Slf4j
@@ -43,17 +40,12 @@ public class SessionController {
      * @return
      */
     @GetMapping("/sessions")
-    public ResponseEntity<Session> getActiveSession(@CookieValue(value = "oba_portal_session", required = false) String portalSessionId) {
-        if (isBlank(portalSessionId)) {
-            log.info("No session id present");
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
-        log.info("Returning session");
-        return new ResponseEntity<>(sessionService.findActiveSession(portalSessionId), HttpStatus.OK);
+    public Session getActiveSession(@CookieValue(value = "oba_portal_session", required = false) String portalSessionId) {
+        return sessionService.findActiveSession(portalSessionId);
     }
 
     @PostMapping("/sessions")
-    public void cognitoTokenToSession(@Valid @RequestBody CognitoIdToken cognitoToken, HttpServletResponse response) {
+    public Session cognitoTokenToSession(@Valid @RequestBody CognitoIdToken cognitoToken, HttpServletResponse response) {
         // Validate the Cognito token signature and get its claims
         Map<String, Object> tokenClaims = cognitoService.verifyAndGetCognitoClaims(cognitoToken);
 
@@ -63,12 +55,13 @@ public class SessionController {
         // The user has successfully authenticated with Cognito and OBA was able to identify the user..
         // If OBA does not know the user yet we should look for a registration and promote it to an organization
         portalUser = portalUserOptional.orElseGet(() -> firstTimeSessionService.promoteRegistrationToOrganizationWithUser(tokenClaims));
-        UUID session = sessionService.createSession(portalUser.getId());
-        setSessionCookie(session, response);
+        Session session = sessionService.createSession(portalUser.getId());
+        setSessionCookie(session.getId(), response);
+        return session;
     }
 
-    @DeleteMapping
-    public void deleteSession(@CookieValue(value = "oba_portal_session", required = false) String portalSessionId) {
+    @DeleteMapping("/sessions")
+    public void deleteSession(@CookieValue(value = "oba_portal_session") String portalSessionId) {
         UUID uuid = UUIDParser.fromString(portalSessionId);
         sessionService.deleteSession(uuid);
     }

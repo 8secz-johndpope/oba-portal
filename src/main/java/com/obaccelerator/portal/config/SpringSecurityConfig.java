@@ -1,6 +1,7 @@
 package com.obaccelerator.portal.config;
 
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -25,10 +26,9 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                         "/pages/**",
                         "/app/**",
                         "/registrations/**",
-                        "/sessions/**").permitAll()
-                .anyRequest().authenticated()
-                .and()
-                .formLogin()
-                .loginPage("https://localhost/login").permitAll();
+                        "/sessions/**",
+                        "/login").permitAll()
+                .antMatchers("/organizations/**").hasAuthority("client_user")
+                .anyRequest().authenticated();
     }
 }

@@ -1,14 +1,18 @@
-package com.obaccelerator.portal.session;
+package com.obaccelerator.portal.shared.session;
 
-import com.obaccelerator.common.error.EntityNotFoundException;
 import com.obaccelerator.common.uuid.UUIDParser;
 import com.obaccelerator.portal.id.UuidRepository;
+import com.obaccelerator.portal.session.Session;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 import java.util.UUID;
 
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
+
+@Slf4j
 @Service
 public class SessionService {
 
@@ -20,27 +24,26 @@ public class SessionService {
         this.uuidRepository = uuidRepository;
     }
 
-    UUID createSession(UUID portalUserId) {
+    public Session createSession(UUID portalUserId) {
         UUID uuid = uuidRepository.newId();
         sessionRepository.createSession(uuid, portalUserId);
-        return uuid;
+        return findActiveSession(uuid.toString());
     }
 
-    Session findActiveSession(String sessionId) {
+    public Session findActiveSession(String sessionId) {
+        if (isBlank(sessionId)) {
+            throw new NoSessionException();
+        }
+
         Optional<Session> activeSession = sessionRepository.findActiveSession(UUIDParser.fromString(sessionId));
         if (activeSession.isPresent()) {
             sessionRepository.updateSessionLastUsed(UUIDParser.fromString(sessionId));
             return activeSession.get();
-        } else {
-            throw new EntityNotFoundException(Session.class, UUID.fromString(sessionId));
         }
+        throw new NoSessionException();
     }
 
-    public void updateSessionLastUsed(UUID sessionId) {
-        sessionRepository.updateSessionLastUsed(sessionId);
-    }
-
-    void deleteSession(UUID sessionId) {
+    public void deleteSession(UUID sessionId) {
         sessionRepository.deleteSession(sessionId);
     }
 

@@ -1,6 +1,7 @@
-package com.obaccelerator.portal.session;
+package com.obaccelerator.portal.shared.session;
 
 import com.obaccelerator.common.date.DateUtil;
+import com.obaccelerator.portal.session.Session;
 import org.springframework.dao.support.DataAccessUtils;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -47,16 +48,18 @@ public class SessionRepository {
 
     Optional<Session> findActiveSession(UUID sessionId) {
         return Optional.ofNullable(DataAccessUtils.singleResult(
-                namedParameterJdbcTemplate.query("SELECT BIN_TO_UUID(id) realId, session.* " +
-                                "FROM obaportal.session " +
-                                "WHERE id = UUID_TO_BIN(:sessionId) " +
+                namedParameterJdbcTemplate.query("SELECT session.*, BIN_TO_UUID(session.id) as session_id, " +
+                                "BIN_TO_UUID(portal_user.organization_id) as organization_id " +
+                                "FROM session INNER JOIN portal_user on session.portal_user_id = portal_user.id " +
+                                "WHERE session.id = UUID_TO_BIN(:sessionId) " +
                                 "AND last_used > NOW() - INTERVAL 30 MINUTE",
                         new HashMap<String, Object>() {
                             {
                                 put("sessionId", sessionId.toString());
                             }
                         }, (rs, rowNum) -> new Session(
-                                UUID.fromString(rs.getString("realId")),
+                                UUID.fromString(rs.getString("session_id")),
+                                UUID.fromString(rs.getString("organization_id")),
                                 DateUtil.mysqlUtcDateTimeToOffsetDateTime(rs.getString("last_used")),
                                 DateUtil.mysqlUtcDateTimeToOffsetDateTime(rs.getString("created"))))));
     }
