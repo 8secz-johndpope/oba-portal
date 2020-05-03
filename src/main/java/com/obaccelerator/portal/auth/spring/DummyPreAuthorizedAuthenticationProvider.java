@@ -1,4 +1,4 @@
-package com.obaccelerator.portal.authentication.spring;
+package com.obaccelerator.portal.auth.spring;
 
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.core.Authentication;

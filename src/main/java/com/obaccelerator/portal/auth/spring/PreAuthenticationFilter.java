@@ -1,4 +1,4 @@
-package com.obaccelerator.portal.authentication.spring;
+package com.obaccelerator.portal.auth.spring;
 
 import com.obaccelerator.common.error.EntityNotFoundException;
 import com.obaccelerator.portal.portaluser.PortalUser;
@@ -21,7 +21,7 @@ import static com.obaccelerator.portal.ObaPortalApplication.SESSION_COOKIE_NAME;
  * PreAuthenticatedAuthenticationToken. This token later provided to the (required)
  * DummyPreauthenticatedAuthenticationManager, which then provides it to the (required)
  * DummyPreAuthorizedAuthenticationProvider.
- *
+ * <p>
  * The SessionController is used for initially getting the cookie in exchange for a valid CognitoToken
  */
 @Slf4j
@@ -43,10 +43,10 @@ public class PreAuthenticationFilter extends AbstractPreAuthenticatedProcessingF
             for (Cookie cookie : cookies) {
                 if (cookie.getName().equals(SESSION_COOKIE_NAME)) {
                     Optional<Session> activeSessionOptional = sessionService.findActiveSession(cookie.getValue());
-                    if(activeSessionOptional.isPresent()) {
+                    if (activeSessionOptional.isPresent()) {
                         Session session = activeSessionOptional.get();
                         Optional<PortalUser> portalUserOptional = portalUserService.findById(session.getPortalUserId(), session.getOrganizationId());
-                        if(portalUserOptional.isPresent()) {
+                        if (portalUserOptional.isPresent()) {
                             log.info("Adding portal user " + portalUserOptional.get().getId() + " to security context");
                             return SecurityContextHelper.getPreAuthenticatedPrincipal(portalUserOptional.get());
                         } else {

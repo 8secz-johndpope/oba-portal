@@ -29,7 +29,8 @@ public class SessionService {
     }
 
     public Optional<Session> findActiveSession(String sessionId) {
-        return sessionRepository.findActiveSession(UUIDParser.fromString(sessionId));
+        Optional<Session> activeSessionOptional = sessionRepository.findActiveSession(UUIDParser.fromString(sessionId));
+        return activeSessionOptional;
     }
 
     public void deleteSession(UUID sessionId) {

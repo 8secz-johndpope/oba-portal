@@ -1,10 +1,10 @@
-package com.obaccelerator.portal.authentication.spring;
+package com.obaccelerator.portal.auth.spring;
 
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 
-public class DummyPreauthenticatedAuthenticationManager implements AuthenticationManager {
+public class DummyPreAuthenticatedAuthenticationManager implements AuthenticationManager {
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         return authentication;

@@ -16,5 +16,9 @@ public class PortalUser {
     private UUID organizationId;
     private OffsetDateTime firstLogin;
     private OffsetDateTime created;
+
+    public boolean belongsToOrganization(String organizationId) {
+        return UUID.fromString(organizationId).equals(this.organizationId);
+    }
 }
 

@@ -1,4 +1,4 @@
-package com.obaccelerator.portal.authentication.cognito;
+package com.obaccelerator.portal.auth.cognito;
 
 import com.obaccelerator.portal.session.CognitoKey;
 import lombok.Getter;

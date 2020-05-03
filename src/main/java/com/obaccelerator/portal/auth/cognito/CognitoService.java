@@ -1,4 +1,4 @@
-package com.obaccelerator.portal.authentication.cognito;
+package com.obaccelerator.portal.auth.cognito;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.obaccelerator.common.http.ExpectedHttpCodesValidator;

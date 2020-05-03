@@ -3,6 +3,7 @@ package com.obaccelerator.portal;
 import com.obaccelerator.common.error.ObaBaseExceptionHandler;
 import com.obaccelerator.common.error.ObaError;
 import com.obaccelerator.common.error.ObaErrorMessage;
+import com.obaccelerator.portal.auth.NotAuthorizedException;
 import com.obaccelerator.portal.registration.RegistrationAlreadyExistsException;
 import com.obaccelerator.portal.session.InvalidCognitoTokenException;
 import com.obaccelerator.portal.shared.session.NoSessionException;
@@ -31,6 +32,12 @@ public class ObaPortalExceptionHandler extends ObaBaseExceptionHandler {
     @ExceptionHandler(value = NoSessionException.class)
     public ResponseEntity<ObaErrorMessage> handleMissingSessionException(NoSessionException e, WebRequest webRequest) {
         ObaErrorMessage errorMessage = new ObaErrorMessage(ObaError.PORTAL_MISSING_SESSION);
+        return handle(errorMessage, e);
+    }
+
+    @ExceptionHandler(value = NotAuthorizedException.class)
+    public ResponseEntity<ObaErrorMessage> handleMissingSessionException(NotAuthorizedException e, WebRequest webRequest) {
+        ObaErrorMessage errorMessage = new ObaErrorMessage(ObaError.PORTAL_NOT_AUTHORIZED);
         return handle(errorMessage, e);
     }
 

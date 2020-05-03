@@ -1,7 +1,7 @@
 package com.obaccelerator.portal.session;
 
 import com.obaccelerator.common.uuid.UUIDParser;
-import com.obaccelerator.portal.authentication.cognito.CognitoService;
+import com.obaccelerator.portal.auth.cognito.CognitoService;
 import com.obaccelerator.portal.portaluser.PortalUser;
 import com.obaccelerator.portal.portaluser.PortalUserService;
 import com.obaccelerator.portal.shared.session.NoSessionException;
@@ -38,7 +38,8 @@ public class SessionController {
     }
 
     /**
-     * Checks whether the user has a valid session cookie
+     * Checks whether the user has a valid session cookie. This is called from the Angular front-end's AuthGuard
+     * whenever the user navigates to an Admin view.
      *
      * @param portalSessionId
      * @return
