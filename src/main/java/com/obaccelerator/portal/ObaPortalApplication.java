@@ -12,7 +12,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 public class ObaPortalApplication {
 
     public static final String SESSION_COOKIE_NAME = "oba_portal_session";
-    public static final int SESSION_DURATION_MINUTES = 1;
+    public static final int SESSION_DURATION_MINUTES = 30;
     public static final String SESSION_URL = "/sessions/";
     public static final String ORGANIZATION_ADMIN = "ORGANIZATION_ADMIN";
 

@@ -47,7 +47,7 @@ public class PreAuthenticationFilter extends AbstractPreAuthenticatedProcessingF
                         Session session = activeSessionOptional.get();
                         Optional<PortalUser> portalUserOptional = portalUserService.findById(session.getPortalUserId(), session.getOrganizationId());
                         if (portalUserOptional.isPresent()) {
-                            log.info("Adding portal user " + portalUserOptional.get().getId() + " to security context");
+                            sessionService.updateSessionLastUsed(session.getId());
                             return SecurityContextHelper.getPreAuthenticatedPrincipal(portalUserOptional.get());
                         } else {
                             throw new EntityNotFoundException(PortalUser.class, session.getPortalUserId());
