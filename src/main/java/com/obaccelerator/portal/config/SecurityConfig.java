@@ -6,6 +6,7 @@ import com.obaccelerator.portal.auth.spring.PreAuthenticationFilter;
 import com.obaccelerator.portal.portaluser.PortalUserService;
 import com.obaccelerator.portal.shared.session.SessionService;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -38,7 +39,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authenticationProvider(new DummyPreAuthorizedAuthenticationProvider())
                 .addFilterBefore(preAuthFilter, BasicAuthenticationFilter.class)
                 .authorizeRequests()
-                .antMatchers("/pages/**", "/sessions/").permitAll()
+                .antMatchers(HttpMethod.GET, "/pages/**").permitAll() // getting pages allowed
+                .antMatchers(HttpMethod.POST, "/sessions/").permitAll() // creating a new session allowed
+                .antMatchers(HttpMethod.POST, "/registrations/").permitAll() // creating a new registration allowed
                 .anyRequest()
                 .authenticated();
     }
