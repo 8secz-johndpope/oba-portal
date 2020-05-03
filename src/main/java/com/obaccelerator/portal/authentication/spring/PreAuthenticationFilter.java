@@ -7,49 +7,36 @@ import com.obaccelerator.portal.session.SecurityContextHelper;
 import com.obaccelerator.portal.session.Session;
 import com.obaccelerator.portal.shared.session.SessionService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.security.web.authentication.preauth.AbstractPreAuthenticatedProcessingFilter;
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.Optional;
 
 import static com.obaccelerator.portal.ObaPortalApplication.SESSION_COOKIE_NAME;
 
 /**
- * This is a regular filter that checks every request for a session cookie. If found, the user to whom the session belongs
- * is retrieved and added to the Spring Security Context as a user with role ORGANIZATION_ADMIN.
+ * This filter authenticates each request by taking the session id from the cookie if it exists and returning a
+ * UsernamePasswordAuthenticationToken to Spring Security. Spring internally turns this into a
+ * PreAuthenticatedAuthenticationToken. This token later provided to the (required)
+ * DummyPreauthenticatedAuthenticationManager, which then provides it to the (required)
+ * DummyPreAuthorizedAuthenticationProvider.
  *
- * There are maybe more elegant ways to integrate with Spring Security, such as AbstractPreAuthenticatedProcessingFilter
- * or AbstractAuthenticationProcessingFilter. I have tried a few option, but found this to be simple, readable and
- * effective.
- *
- * I am not sure Spring Security offers classes for my specific approach : authentication at Cognito yields a session
- * token, that is then validated by Oba Portal (signature validation) and is then exchanged for an Oba Portal session
- * cookie. So I decided to write this barebones filter for checking each request and the POST /sessions endpoint for
- * the token-to-session exchange.
- *
- * This filter runs for every request, so also for requests to POST /sessions. This is not a problem. Since no cookie
- * is present before authentication at POST /sessions the filter will skip its session logic and proceed as normal.
+ * The SessionController is used for initially getting the cookie in exchange for a valid CognitoToken
  */
 @Slf4j
-public class SpringSessionAuthenticationFilter extends OncePerRequestFilter {
-
+public class PreAuthenticationFilter extends AbstractPreAuthenticatedProcessingFilter {
 
     private SessionService sessionService;
     private PortalUserService portalUserService;
 
-    public SpringSessionAuthenticationFilter(SessionService sessionService, PortalUserService portalUserService) {
+    public PreAuthenticationFilter(SessionService sessionService, PortalUserService portalUserService) {
         this.sessionService = sessionService;
         this.portalUserService = portalUserService;
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        log.info("Custom security filter hit");
+    protected Object getPreAuthenticatedPrincipal(HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
 
         if (cookies != null) {
@@ -61,7 +48,7 @@ public class SpringSessionAuthenticationFilter extends OncePerRequestFilter {
                         Optional<PortalUser> portalUserOptional = portalUserService.findById(session.getPortalUserId(), session.getOrganizationId());
                         if(portalUserOptional.isPresent()) {
                             log.info("Adding portal user " + portalUserOptional.get().getId() + " to security context");
-                            SecurityContextHelper.portalUserToSecurityContext(portalUserOptional.get());
+                            return SecurityContextHelper.getPreAuthenticatedPrincipal(portalUserOptional.get());
                         } else {
                             throw new EntityNotFoundException(PortalUser.class, session.getPortalUserId());
                         }
@@ -69,10 +56,12 @@ public class SpringSessionAuthenticationFilter extends OncePerRequestFilter {
                 }
             }
         }
-
-        filterChain.doFilter(request, response);
-
+        return null;
     }
 
+    @Override
+    protected Object getPreAuthenticatedCredentials(HttpServletRequest request) {
+        return "";
+    }
 
 }

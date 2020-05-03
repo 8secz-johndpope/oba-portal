@@ -21,7 +21,6 @@ public class PageController {
     }
 
 
-    @PreAuthorize("hasAuthority('ORGANIZATION_ADMIN')")
     @GetMapping("/pages/{uniqueUrlName}")
     public ResponseEntity<Page> page(@PathVariable("uniqueUrlName") String uniqueUrlName) {
         RequestAttributes requestAttributes = RequestContextHolder.currentRequestAttributes();

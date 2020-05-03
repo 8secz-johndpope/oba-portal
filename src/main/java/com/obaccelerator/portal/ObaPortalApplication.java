@@ -16,6 +16,8 @@ public class ObaPortalApplication {
     public static final String SESSION_URL = "/sessions/";
     public static final String ORGANIZATION_ADMIN = "ORGANIZATION_ADMIN";
 
+
+
     public static void main(String[] args) {
         SpringApplication.run(ObaPortalApplication.class, args);
     }
