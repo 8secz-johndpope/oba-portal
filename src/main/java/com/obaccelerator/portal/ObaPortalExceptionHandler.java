@@ -29,7 +29,7 @@ public class ObaPortalExceptionHandler extends ObaBaseExceptionHandler {
     }
 
     @ExceptionHandler(value = NoSessionException.class)
-    public ResponseEntity<ObaErrorMessage> handleMissingSessionException(InvalidCognitoTokenException e, WebRequest webRequest) {
+    public ResponseEntity<ObaErrorMessage> handleMissingSessionException(NoSessionException e, WebRequest webRequest) {
         ObaErrorMessage errorMessage = new ObaErrorMessage(ObaError.PORTAL_MISSING_SESSION);
         return handle(errorMessage, e);
     }

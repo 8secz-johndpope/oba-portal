@@ -9,8 +9,6 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.apache.commons.lang3.StringUtils.isBlank;
-
 
 @Slf4j
 @Service
@@ -27,20 +25,11 @@ public class SessionService {
     public Session createSession(UUID portalUserId) {
         UUID uuid = uuidRepository.newId();
         sessionRepository.createSession(uuid, portalUserId);
-        return findActiveSession(uuid.toString());
+        return findActiveSession(uuid.toString()).get();
     }
 
-    public Session findActiveSession(String sessionId) {
-        if (isBlank(sessionId)) {
-            throw new NoSessionException();
-        }
-
-        Optional<Session> activeSession = sessionRepository.findActiveSession(UUIDParser.fromString(sessionId));
-        if (activeSession.isPresent()) {
-            sessionRepository.updateSessionLastUsed(UUIDParser.fromString(sessionId));
-            return activeSession.get();
-        }
-        throw new NoSessionException();
+    public Optional<Session> findActiveSession(String sessionId) {
+        return sessionRepository.findActiveSession(UUIDParser.fromString(sessionId));
     }
 
     public void deleteSession(UUID sessionId) {

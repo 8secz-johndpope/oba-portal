@@ -25,4 +25,6 @@ public class ObaPortalConfig {
                 .build();
         return ApacheHttpsClientFactory.getHttpsClient(clientFactoryInput);
     }
+
+
 }

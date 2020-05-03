@@ -21,6 +21,10 @@ public class PortalUserService {
         return portalRepository.findPortalUserByCognitoId(cognitoId);
     }
 
+    public Optional<PortalUser> findById(UUID id, UUID organizationId) {
+        return portalRepository.findById(id, organizationId);
+    }
+
     public PortalUser createPortalUserForCognitoUser(String cognitoUserId, UUID organizationId) {
         UUID uuid = uuidRepository.newId();
         portalRepository.createPortalUser(uuid, cognitoUserId, organizationId);

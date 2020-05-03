@@ -1,4 +1,4 @@
-package com.obaccelerator.portal.cognito;
+package com.obaccelerator.portal.authentication.cognito;
 
 import lombok.Value;
 

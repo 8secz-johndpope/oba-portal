@@ -18,7 +18,7 @@ public class Session {
     @JsonIgnore
     private UUID id;
 
-
+    private UUID portalUserId;
     private UUID organizationId;
     private OffsetDateTime lastUsed;
     private OffsetDateTime created;

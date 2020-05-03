@@ -1,4 +1,4 @@
-package com.obaccelerator.portal.cognito;
+package com.obaccelerator.portal.authentication.cognito;
 
 import com.obaccelerator.common.http.RequestBuilder;
 import org.apache.http.client.methods.HttpGet;

@@ -1,5 +1,6 @@
-package com.obaccelerator.portal.cognito;
+package com.obaccelerator.portal.authentication.cognito;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.obaccelerator.common.http.ExpectedHttpCodesValidator;
 import com.obaccelerator.common.http.RequestExecutor;
 import com.obaccelerator.common.http.ResponseNotEmptyValidator;
@@ -16,6 +17,8 @@ import org.jose4j.jwk.RsaJsonWebKey;
 import org.jose4j.lang.JoseException;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.util.Map;
 import java.util.Optional;
 
@@ -43,7 +46,17 @@ public class CognitoService {
         return publicKeyCollection.getKey(keyId);
     }
 
-    public Map<String, Object> verifyAndGetCognitoClaims(CognitoIdToken cognitoToken) {
+    public Map<String, Object> verifyAndGetCognitoClaimsFromRequest(HttpServletRequest request) {
+        CognitoIdToken cognitoToken = null;
+        try {
+            cognitoToken = new ObjectMapper().readValue(request.getInputStream(), CognitoIdToken.class);
+            return verifyAndGetCognitoClaims(cognitoToken);
+        } catch (IOException e) {
+            throw new RuntimeException("Could not get Cognito token from response body");
+        }
+    }
+
+    private Map<String, Object> verifyAndGetCognitoClaims(CognitoIdToken cognitoToken) {
 
         JsonWebKey jsonWebKey = fetchCognitoPublicKey(cognitoToken);
 
