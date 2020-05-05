@@ -25,8 +25,11 @@ public class PortalUserArgumentResolver implements HandlerMethodArgumentResolver
                                   NativeWebRequest webRequest, WebDataBinderFactory binderFactory) throws Exception {
 
         Principal userPrincipal = webRequest.getUserPrincipal();
-        PreAuthenticatedAuthenticationToken preAuthToken = (PreAuthenticatedAuthenticationToken) userPrincipal;
-        UsernamePasswordAuthenticationToken upToken = (UsernamePasswordAuthenticationToken) preAuthToken.getPrincipal();
-        return upToken.getDetails();
+        if (userPrincipal != null) {
+            PreAuthenticatedAuthenticationToken preAuthToken = (PreAuthenticatedAuthenticationToken) userPrincipal;
+            UsernamePasswordAuthenticationToken upToken = (UsernamePasswordAuthenticationToken) preAuthToken.getPrincipal();
+            return upToken.getDetails();
+        }
+        return null;
     }
 }
