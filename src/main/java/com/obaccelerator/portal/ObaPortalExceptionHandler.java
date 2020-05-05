@@ -19,26 +19,26 @@ public class ObaPortalExceptionHandler extends ObaBaseExceptionHandler {
     @ExceptionHandler(value = RegistrationAlreadyExistsException.class)
     public ResponseEntity<ObaErrorMessage> handleRegistrationAlreadyExistsException(RegistrationAlreadyExistsException e, WebRequest webRequest) {
         ObaErrorMessage errorMessage = new ObaErrorMessage(ObaError.PORTAL_REGISTRATION_ALREADY_EXISTS);
-        return handle(errorMessage, e);
+        return handleAsError(errorMessage, e);
     }
 
     @ExceptionHandler(value = InvalidCognitoTokenException.class)
     public ResponseEntity<ObaErrorMessage> handleInvalidCognitoTokenException(InvalidCognitoTokenException e, WebRequest webRequest) {
         ObaErrorMessage errorMessage = new ObaErrorMessage(400, null, "Your message contained errors");
         errorMessage.addFieldErrors(collectBindingErrors(e));
-        return handle(errorMessage, e);
+        return handleAsError(errorMessage, e);
     }
 
     @ExceptionHandler(value = NoSessionException.class)
     public ResponseEntity<ObaErrorMessage> handleMissingSessionException(NoSessionException e, WebRequest webRequest) {
         ObaErrorMessage errorMessage = new ObaErrorMessage(ObaError.PORTAL_MISSING_SESSION);
-        return handle(errorMessage, e);
+        return handleAsInfo(errorMessage, e);
     }
 
     @ExceptionHandler(value = NotAuthorizedException.class)
     public ResponseEntity<ObaErrorMessage> handleMissingSessionException(NotAuthorizedException e, WebRequest webRequest) {
         ObaErrorMessage errorMessage = new ObaErrorMessage(ObaError.PORTAL_NOT_AUTHORIZED);
-        return handle(errorMessage, e);
+        return handleAsError(errorMessage, e);
     }
 
 }

@@ -1,10 +1,10 @@
 package com.obaccelerator.portal.auth.spring;
 
-import com.obaccelerator.common.error.EntityNotFoundException;
 import com.obaccelerator.portal.portaluser.PortalUser;
 import com.obaccelerator.portal.portaluser.PortalUserService;
 import com.obaccelerator.portal.session.SecurityContextHelper;
 import com.obaccelerator.portal.session.Session;
+import com.obaccelerator.portal.shared.session.NoSessionException;
 import com.obaccelerator.portal.shared.session.SessionService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.web.authentication.preauth.AbstractPreAuthenticatedProcessingFilter;
@@ -51,7 +51,7 @@ public class PreAuthenticationFilter extends AbstractPreAuthenticatedProcessingF
                             sessionService.updateSessionLastUsed(session.getId());
                             return SecurityContextHelper.portalUserToToken(portalUserOptional.get());
                         } else {
-                            throw new EntityNotFoundException(PortalUser.class, session.getPortalUserId());
+                            throw new NoSessionException();
                         }
                     }
                 }
