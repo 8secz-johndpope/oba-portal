@@ -1,0 +1,33 @@
+PORTAL FEATURES
+
+Organization
+- Manage organization details
+- Create and delete keys
+- Add/delete applications
+- Download invoices
+- Register Organization technical and administrative contact
+
+
+Application
+- Create new application: name,
+- Upload signature verification keys
+- Download client certificate (how the f are we going to validate this on AWS. pass thru on NLB looks like the only option)
+- Onboard with banks: create and update registration (redirect URLs, certificate)
+- Enable onboarded banks for all, for some, disable for all, for some
+- Tag onboarded banks
+- Set refresh policy (1,2,3,4 times per day, when do we stop refreshing a user)
+- Set data retention policy (min 2 months so that OBA may tell clients what is new and what already exists)
+- User search, analysis and delete
+- Metrics & dashboards : per bank the number of connections, number of re-consents, number of accounts per account type
+- Register Application technical and Application contact (by default inherit from Organization)
+
+
+When someone first enters he can do two things :
+--> (required) create keys and certs at the organization level
+--> update organization details
+Build keys
+
+
+IDEAS
+
+- Clients must upload signing and transport certs so we can actively check and notify about expiration for them

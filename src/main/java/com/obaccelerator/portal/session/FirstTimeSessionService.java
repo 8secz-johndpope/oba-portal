@@ -44,7 +44,7 @@ public class FirstTimeSessionService {
             Registration registration = registrationOptional.get();
             if (!registration.isPromotedToOrganizationWithId()) {
                 // Create the organization
-                ObaOrganization organization = organizationObaGatewayService.createOrganization(registration);
+                ObaOrganization organization = organizationObaGatewayService.createOrganizationFromRegistration(registration);
                 // Update the registration with the organization id, so we can track which registration turned into
                 // organizations
                 registrationService.setOrganizatioIdForRegistration(registration.getId(), organization.getId());

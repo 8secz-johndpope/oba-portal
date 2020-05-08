@@ -4,15 +4,15 @@ import com.obaccelerator.common.uuid.UUIDParser;
 import com.obaccelerator.portal.auth.NotAuthorizedException;
 import com.obaccelerator.portal.portaluser.PortalUser;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @Slf4j
 @RestController
 public class OrganizationController {
 
-    private OrganizationObaGatewayService organizationObaGatewayService;
+    private final OrganizationObaGatewayService organizationObaGatewayService;
 
     public OrganizationController(OrganizationObaGatewayService organizationObaGatewayService) {
         this.organizationObaGatewayService = organizationObaGatewayService;
@@ -22,6 +22,14 @@ public class OrganizationController {
     public ObaOrganization getOrganization(@PathVariable("organizationId") String organizationId, PortalUser portalUser) {
         authorize(portalUser, organizationId);
         return organizationObaGatewayService.findOrganization(UUIDParser.fromString(organizationId));
+    }
+
+    @PutMapping("/organizations")
+    public ObaOrganization updateOrganization(@Valid @RequestBody UpdateObaOrganizationRequest updateObaOrganizationRequest,
+                                              PortalUser portalUser) {
+        authorize(portalUser, updateObaOrganizationRequest.getOrganizationId());
+        ObaOrganization obaOrganization = organizationObaGatewayService.updateOrganization(updateObaOrganizationRequest);
+        return obaOrganization;
     }
 
     private void authorize(PortalUser portalUser, String organizationId) {

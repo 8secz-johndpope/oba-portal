@@ -1,20 +1,27 @@
 package com.obaccelerator.portal.organization;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.OffsetDateTime;
-import java.util.UUID;
+import javax.validation.constraints.NotEmpty;
 
 @Getter
 @Setter
-public class ObaOrganization {
-    private UUID id;
+@NoArgsConstructor
+public class UpdateObaOrganizationRequest {
+
+    @NotEmpty
+    private String organizationId;
+    @NotEmpty
     private String name;
     private String vatNumber;
+    @NotEmpty
     private String street;
+    @NotEmpty
     private String streetNumber;
+    @NotEmpty
     private String postalCode;
+    @NotEmpty
     private String country;
-    private OffsetDateTime created;
 }
