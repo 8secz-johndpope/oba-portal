@@ -28,8 +28,7 @@ public class OrganizationController {
     public ObaOrganization updateOrganization(@Valid @RequestBody UpdateObaOrganizationRequest updateObaOrganizationRequest,
                                               PortalUser portalUser) {
         authorize(portalUser, updateObaOrganizationRequest.getOrganizationId());
-        ObaOrganization obaOrganization = organizationObaGatewayService.updateOrganization(updateObaOrganizationRequest);
-        return obaOrganization;
+        return organizationObaGatewayService.updateOrganization(updateObaOrganizationRequest);
     }
 
     private void authorize(PortalUser portalUser, String organizationId) {
