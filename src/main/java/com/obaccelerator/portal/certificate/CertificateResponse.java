@@ -8,7 +8,7 @@ import java.time.OffsetDateTime;
 import java.util.UUID;
 
 @Value
-public class CreateCertificateResponse extends RestResponse {
+public class CertificateResponse extends RestResponse {
     UUID id;
     UUID organizationId;
     String name;
