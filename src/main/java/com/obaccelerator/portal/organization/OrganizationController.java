@@ -19,14 +19,14 @@ public class OrganizationController {
     }
 
     @GetMapping("/organizations/{organizationId}")
-    public ObaOrganization getOrganization(@PathVariable("organizationId") String organizationId, PortalUser portalUser) {
+    public ObaOrganizationResponse getOrganization(@PathVariable("organizationId") String organizationId, PortalUser portalUser) {
         authorize(portalUser, organizationId);
         return organizationObaGatewayService.findOrganization(UUIDParser.fromString(organizationId));
     }
 
     @PutMapping("/organizations")
-    public ObaOrganization updateOrganization(@Valid @RequestBody UpdateObaOrganizationRequest updateObaOrganizationRequest,
-                                              PortalUser portalUser) {
+    public ObaOrganizationResponse updateOrganization(@Valid @RequestBody UpdateObaOrganizationRequest updateObaOrganizationRequest,
+                                                      PortalUser portalUser) {
         authorize(portalUser, updateObaOrganizationRequest.getOrganizationId());
         return organizationObaGatewayService.updateOrganization(updateObaOrganizationRequest);
     }

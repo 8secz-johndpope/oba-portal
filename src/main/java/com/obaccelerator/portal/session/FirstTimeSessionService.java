@@ -1,6 +1,6 @@
 package com.obaccelerator.portal.session;
 
-import com.obaccelerator.portal.organization.ObaOrganization;
+import com.obaccelerator.portal.organization.ObaOrganizationResponse;
 import com.obaccelerator.portal.organization.OrganizationObaGatewayService;
 import com.obaccelerator.portal.portaluser.PortalUser;
 import com.obaccelerator.portal.portaluser.PortalUserService;
@@ -44,7 +44,7 @@ public class FirstTimeSessionService {
             Registration registration = registrationOptional.get();
             if (!registration.isPromotedToOrganizationWithId()) {
                 // Create the organization
-                ObaOrganization organization = organizationObaGatewayService.createOrganizationFromRegistration(registration);
+                ObaOrganizationResponse organization = organizationObaGatewayService.createOrganizationFromRegistration(registration);
                 // Update the registration with the organization id, so we can track which registration turned into
                 // organizations
                 registrationService.setOrganizatioIdForRegistration(registration.getId(), organization.getId());

@@ -23,7 +23,7 @@ public class OrganizationObaGatewayService {
         this.obaPortalProperties = obaPortalProperties;
     }
 
-    public ObaOrganization createOrganizationFromRegistration(Registration registration) {
+    public ObaOrganizationResponse createOrganizationFromRegistration(Registration registration) {
 
         RequestBuilder<CreateOrganizationRequest> requestBuilder = (input) -> {
             String url = obaPortalProperties.getObaBaseUrl() + EndpointDef.Path.POST_ORGANIZATIONS;
@@ -33,7 +33,7 @@ public class OrganizationObaGatewayService {
             return httpPost;
         };
 
-        return new RequestExecutor.Builder<>(requestBuilder, obaHttpClient, ObaOrganization.class)
+        return new RequestExecutor.Builder<>(requestBuilder, obaHttpClient, ObaOrganizationResponse.class)
                 .addResponseValidator(new ResponseNotEmptyValidator())
                 .addResponseValidator(new ExpectedHttpCodesValidator(201))
                 .logRequestResponsesOnError(obaPortalProperties.isLogRequestsResponsesOnErrorForOrganizations())
@@ -41,7 +41,7 @@ public class OrganizationObaGatewayService {
                 .execute(new CreateOrganizationRequest(registration.getOrganizationName()));
     }
 
-    ObaOrganization updateOrganization(UpdateObaOrganizationRequest updateObaOrganizationRequest) {
+    ObaOrganizationResponse updateOrganization(UpdateObaOrganizationRequest updateObaOrganizationRequest) {
 
         RequestBuilder<UpdateObaOrganizationRequest> requestBuilder = (input) -> {
             String url = obaPortalProperties.getObaBaseUrl() + EndpointDef.Path.PUT_ORGANIZATIONS;
@@ -51,7 +51,7 @@ public class OrganizationObaGatewayService {
             return httpPut;
         };
 
-        return new RequestExecutor.Builder<>(requestBuilder, obaHttpClient, ObaOrganization.class)
+        return new RequestExecutor.Builder<>(requestBuilder, obaHttpClient, ObaOrganizationResponse.class)
                 .addResponseValidator(new ResponseNotEmptyValidator())
                 .addResponseValidator(new ExpectedHttpCodesValidator(200))
                 .logRequestResponsesOnError(obaPortalProperties.isLogRequestsResponsesOnErrorForOrganizations())
@@ -59,14 +59,14 @@ public class OrganizationObaGatewayService {
                 .execute(updateObaOrganizationRequest);
     }
 
-    ObaOrganization findOrganization(UUID id) {
+    ObaOrganizationResponse findOrganization(UUID id) {
 
         RequestBuilder<UUID> requestBuilder = input -> {
             String url = obaPortalProperties.getObaBaseUrl() + EndpointDef.Path.GET_ORGANIZATIONS + "/" + id.toString();
             return new HttpGet(url);
         };
 
-        return new RequestExecutor.Builder<>(requestBuilder, obaHttpClient, ObaOrganization.class)
+        return new RequestExecutor.Builder<>(requestBuilder, obaHttpClient, ObaOrganizationResponse.class)
                 .addResponseValidator(new ResponseNotEmptyValidator())
                 .addResponseValidator(new ExpectedHttpCodesValidator(200))
                 .logRequestResponsesOnError(obaPortalProperties.isLogRequestsResponsesOnErrorForOrganizations())

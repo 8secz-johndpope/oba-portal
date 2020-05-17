@@ -1,5 +1,6 @@
 package com.obaccelerator.portal.organization;
 
+import com.obaccelerator.common.rest.RestResponse;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -8,7 +9,7 @@ import java.util.UUID;
 
 @Getter
 @Setter
-public class ObaOrganization {
+public class ObaOrganizationResponse extends RestResponse {
     private UUID id;
     private String name;
     private String vatNumber;
