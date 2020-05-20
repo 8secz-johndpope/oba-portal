@@ -16,14 +16,20 @@ public class CertificateController {
 
     // TODO: security - integrate Spring security and use pre-authenticated scenario like in Oba-Portal. Get rid of endpoint definitions in commons
     // TODO: security - implement a signed portal token that has am organizationId claim
-    @PostMapping("/{organizationId}/certificates")
+    @PostMapping("/organization/{organizationId}/certificates")
     public CertificateResponse create(@Valid @RequestBody CreateOrganizationCertificateRequest request,
                                       @PathVariable String organizationId) {
         return certificateObaGatewayService.createCertificateInOba(request, organizationId);
     }
 
-    @GetMapping("/{organizationId}/certificates")
+    @GetMapping("/organization/{organizationId}/certificates")
     public CertificateListResponse findAll(@PathVariable String organizationId) {
-        return certificateObaGatewayService.findAll(UUIDParser.fromString(organizationId));
+        return certificateObaGatewayService.findAllForOrganization(UUIDParser.fromString(organizationId));
+    }
+
+    @GetMapping("/organization/{organizationId}/certificates/{certificateId}")
+    public CertificateResponse findOne(@PathVariable String organizationId, @PathVariable String certificateId) {
+        return certificateObaGatewayService.findOneForOrganization(UUIDParser.fromString(organizationId),
+                UUIDParser.fromString(certificateId));
     }
 }

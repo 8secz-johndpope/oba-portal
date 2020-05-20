@@ -40,11 +40,22 @@ public class CertificateObaGatewayService {
                 .execute(certificateRequest);
     }
 
-    public CertificateListResponse findAll(UUID organizationId) {
+    public CertificateListResponse findAllForOrganization(UUID organizationId) {
 
         RequestBuilder<UUID> requestBuilder = (input) -> new HttpGet(obaPortalProperties.getObaBaseUrl() + "/" + organizationId + "/certificates");
 
         return new RequestExecutor.Builder<>(requestBuilder, obaHttpClient, CertificateListResponse.class)
+                .addResponseValidator(new ResponseNotEmptyValidator())
+                .addResponseValidator(new ExpectedHttpCodesValidator(200))
+                .logRequestResponsesOnError(obaPortalProperties.isLogRequestsResponsesOnErrorForOrganizations())
+                .build()
+                .execute(organizationId);
+    }
+
+    public CertificateResponse findOneForOrganization(UUID organizationId, UUID certificateId) {
+        RequestBuilder<UUID> requestBuilder = (input) -> new HttpGet(obaPortalProperties.getObaBaseUrl() + "/" + organizationId + "/certificates/" + certificateId);
+
+        return new RequestExecutor.Builder<>(requestBuilder, obaHttpClient, CertificateResponse.class)
                 .addResponseValidator(new ResponseNotEmptyValidator())
                 .addResponseValidator(new ExpectedHttpCodesValidator(200))
                 .logRequestResponsesOnError(obaPortalProperties.isLogRequestsResponsesOnErrorForOrganizations())

@@ -14,8 +14,9 @@ public class CertificateResponse extends RestResponse {
     String name;
     String description;
     KeyPurpose keyPurpose;
-    String distinguishedName;
+    String csrDistinguishedName;
     String csr;
+    String certificateDistinguishedName;
     String signedCertificate;
     OffsetDateTime created;
 }
