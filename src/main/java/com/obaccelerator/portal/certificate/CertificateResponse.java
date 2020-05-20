@@ -19,4 +19,7 @@ public class CertificateResponse extends RestResponse {
     String certificateDistinguishedName;
     String signedCertificate;
     OffsetDateTime created;
+    OffsetDateTime validFrom;
+    OffsetDateTime validUntil;
+    long daysUntilExpiration;
 }
