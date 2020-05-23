@@ -10,21 +10,21 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class ObaPortalConfig {
 
+    /**
+     * The HTTP client connecting to OBA must accept OBA's self-signed cert
+     * <p>
+     * TODO: security : trust certs signed by the yet to be created OBA CA
+     *
+     */
     @Bean
-    public HttpClient obaPortalHttpClient(ObaPortalProperties portalProperties) {
+    public HttpClient obaPortalHttpClient() {
         ApacheHttpsClientFactory.HttpsClientFactoryInput clientFactoryInput = ApacheHttpsClientFactory.HttpsClientFactoryInput.builder()
                 .connectTimeOut(5000)
                 .socketTimeOut(5000)
                 .defaultPoolSize(2)
                 .maxPoolSize(10)
-                .keyStoreClassPath(portalProperties.getBackendTlsKeyStorePath())
-                .keyStorePw(portalProperties.getBackendTlsKeyStorePassword())
-                .trustStoreClassPath(portalProperties.getBackendTlsTrustStorePath())
-                .trustStorePw(portalProperties.getBackendTlsTrustStorePassword())
                 .trustSelfSigned(true)
                 .build();
         return ApacheHttpsClientFactory.getHttpsClient(clientFactoryInput);
     }
-
-
 }

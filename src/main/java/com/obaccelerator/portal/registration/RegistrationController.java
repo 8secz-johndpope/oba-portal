@@ -2,7 +2,6 @@ package com.obaccelerator.portal.registration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.obaccelerator.portal.BotEvaluationResult;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -10,12 +9,11 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 import java.io.IOException;
 
-@CrossOrigin
 @RestController
 public class RegistrationController {
 
-    private RegistrationService registrationService;
-    private ObjectMapper objectMapper = new ObjectMapper();
+    private final RegistrationService registrationService;
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     public RegistrationController(final RegistrationService registrationService) {
         this.registrationService = registrationService;

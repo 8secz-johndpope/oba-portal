@@ -19,29 +19,11 @@ public class ObaPortalProperties {
     @Value("${ext_obaportal.db.password}")
     private String mysqlPassword;
 
-    /**
-     * Backend TLS is used for calls between oba-portal and oba
-     */
-    @Value("${ext_oba-portal-backend-tls.keystore.password}")
-    private String backendTlsKeyStorePassword;
+    @Value("${ext_oba-portal-server-cert.keystore.password}")
+    private String serverCertKeystorePassword;
 
-    @Value("${backend.tls.keystore.path}")
-    private String backendTlsKeyStorePath;
-
-    @Value("${ext_oba-portal-backend-tls.truststore.password}")
-    private String backendTlsTrustStorePassword;
-
-    @Value("${backend.tls.truststore.path}")
-    private String backendTlsTrustStorePath;
-
-    /**
-     * Client TLS is used for calls from oba-portal-app to oba-portal
-     */
-    @Value("${ext_oba-portal-client-tls.keystore.password}")
-    private String clientTlsKeystorePassword;
-
-    @Value("${client.tls.keystore.path}")
-    public String clientTlsKeyStorePath;
+    @Value("${tls.server.keystore.path}")
+    public String tlsServerKeystorePath;
 
     @Value("${obaportal.db.name}")
     private String dbName;

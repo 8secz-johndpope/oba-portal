@@ -4,11 +4,12 @@ import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactor
 import org.springframework.boot.web.server.Ssl;
 import org.springframework.boot.web.servlet.server.ServletWebServerFactory;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 /**
  * HTTP for now. It is behind nginx which does HTTPS
  */
-//@Configuration
+@Configuration
 public class TlsConfig {
 
     /**
@@ -23,14 +24,15 @@ public class TlsConfig {
     public ServletWebServerFactory servletContainer(ObaPortalProperties properties) {
         TomcatServletWebServerFactory tomcat = new TomcatServletWebServerFactory();
         Ssl ssl = new Ssl();
-        String keyStoreFileSystemPath = getClass().getResource(properties.getClientTlsKeyStorePath()).getPath();
+        String keyStoreFileSystemPath = getClass().getResource(properties.getTlsServerKeystorePath()).getPath();
+
+        // Server cert keystore configuration
         ssl.setKeyStore(keyStoreFileSystemPath);
-        ssl.setKeyStorePassword(properties.getClientTlsKeystorePassword());
-        ssl.setKeyPassword(properties.getClientTlsKeystorePassword());
+        ssl.setKeyStorePassword(properties.getServerCertKeystorePassword());
+        ssl.setKeyPassword(properties.getServerCertKeystorePassword());
         ssl.setKeyStoreType("PKCS12");
         ssl.setEnabled(true);
         ssl.setEnabledProtocols(new String[]{"TLSv1.2"});
-        ssl.setKeyAlias("oba-portal-client-tls");
         ssl.setProtocol("TLSv1.2");
         ssl.setCiphers(new String[]{"ECDHE-RSA-AES128-GCM-SHA256", "ECDHE-RSA-AES256-SHA384"});
         tomcat.setPort(8445);

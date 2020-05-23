@@ -16,12 +16,12 @@ public class Session {
      * Do not return the session id to the front-end in a JSON response. Only in a cookie.
      */
     @JsonIgnore
-    private UUID id;
+    UUID id;
 
-    private UUID portalUserId;
-    private UUID organizationId;
-    private OffsetDateTime lastUsed;
-    private OffsetDateTime created;
+    UUID portalUserId;
+    UUID organizationId;
+    OffsetDateTime lastUsed;
+    OffsetDateTime created;
 
 
 }

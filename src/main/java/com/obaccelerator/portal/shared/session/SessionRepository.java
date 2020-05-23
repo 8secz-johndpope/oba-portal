@@ -50,13 +50,14 @@ public class SessionRepository {
 
     Optional<Session> findActiveSession(UUID sessionId) {
         return Optional.ofNullable(DataAccessUtils.singleResult(
-                namedParameterJdbcTemplate.query("SELECT session.*, BIN_TO_UUID(session.id) as session_id, " +
-                                "BIN_TO_UUID(portal_user.organization_id) as organization_id, " +
-                                "BIN_TO_UUID(portal_user.id) as real_portal_user_id " +
-                                "FROM session INNER JOIN portal_user on session.portal_user_id = portal_user.id " +
-                                "WHERE session.id = UUID_TO_BIN(:sessionId) " +
-                                "AND last_used > NOW() - INTERVAL :duration MINUTE",
-                        new HashMap<String, Object>() {
+                namedParameterJdbcTemplate.query("SELECT s.*, " +
+                                "BIN_TO_UUID(s.id) as session_id, " +
+                                "BIN_TO_UUID(pu.organization_id) as organization_id, " +
+                                "BIN_TO_UUID(pu.id) as real_portal_user_id " +
+                                "FROM session s INNER JOIN portal_user pu on s.portal_user_id = pu.id " +
+                                "WHERE s.id = UUID_TO_BIN(:sessionId) " +
+                                "AND s.last_used > NOW() - INTERVAL :duration MINUTE",
+                        new HashMap<>() {
                             {
                                 put("sessionId", sessionId.toString());
                                 put("duration", SESSION_DURATION_MINUTES);
