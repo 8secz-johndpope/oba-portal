@@ -6,6 +6,8 @@ import org.springframework.boot.web.servlet.server.ServletWebServerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.net.URL;
+
 /**
  * HTTP for now. It is behind nginx which does HTTPS
  */
@@ -24,7 +26,11 @@ public class TlsConfig {
     public ServletWebServerFactory servletContainer(ObaPortalProperties properties) {
         TomcatServletWebServerFactory tomcat = new TomcatServletWebServerFactory();
         Ssl ssl = new Ssl();
-        String keyStoreFileSystemPath = getClass().getResource(properties.getTlsServerKeystorePath()).getPath();
+        URL resource = getClass().getResource(properties.getTlsServerKeystorePath());
+        if(resource == null) {
+            throw new RuntimeException("Couldn't find " + properties.getTlsServerKeystorePath());
+        }
+        String keyStoreFileSystemPath = resource.getPath();
 
         // Server cert keystore configuration
         ssl.setKeyStore(keyStoreFileSystemPath);
