@@ -1,5 +1,6 @@
 package com.obaccelerator.portal.config;
 
+import com.obaccelerator.common.error.ExceptionHandlingFilter;
 import com.obaccelerator.portal.auth.spring.DummyPreAuthorizedAuthenticationProvider;
 import com.obaccelerator.portal.auth.spring.DummyPreAuthenticatedAuthenticationManager;
 import com.obaccelerator.portal.auth.spring.PreAuthenticationFilter;
@@ -13,6 +14,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import org.springframework.web.filter.CorsFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -37,6 +39,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authenticationProvider(new DummyPreAuthorizedAuthenticationProvider())
+                .addFilterBefore(new ExceptionHandlingFilter(), CorsFilter.class)
                 .addFilterBefore(preAuthFilter, BasicAuthenticationFilter.class)
                 .authorizeRequests()
                 .antMatchers(HttpMethod.GET, "/pages/**").permitAll() // getting pages allowed
