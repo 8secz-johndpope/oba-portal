@@ -23,7 +23,7 @@ public class ObaPortalProperties {
     private String serverCertKeystorePassword;
 
     @Value("${tls.server.keystore.path}")
-    public String tlsServerKeystorePath;
+    public String serverCertKeystorePath;
 
     @Value("${obaportal.db.name}")
     private String dbName;

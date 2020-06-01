@@ -26,9 +26,9 @@ public class TlsConfig {
     public ServletWebServerFactory servletContainer(ObaPortalProperties properties) {
         TomcatServletWebServerFactory tomcat = new TomcatServletWebServerFactory();
         Ssl ssl = new Ssl();
-        URL resource = getClass().getResource(properties.getTlsServerKeystorePath());
+        URL resource = getClass().getResource(properties.getServerCertKeystorePath());
         if(resource == null) {
-            throw new RuntimeException("Couldn't find " + properties.getTlsServerKeystorePath());
+            throw new RuntimeException("Couldn't find " + properties.getServerCertKeystorePath());
         }
         String keyStoreFileSystemPath = resource.getPath();
 

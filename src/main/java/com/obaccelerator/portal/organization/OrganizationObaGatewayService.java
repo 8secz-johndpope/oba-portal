@@ -1,6 +1,5 @@
 package com.obaccelerator.portal.organization;
 
-import com.obaccelerator.common.endpoint.EndpointDef;
 import com.obaccelerator.common.http.*;
 import com.obaccelerator.portal.config.ObaPortalProperties;
 import com.obaccelerator.portal.registration.Registration;
@@ -26,7 +25,7 @@ public class OrganizationObaGatewayService {
     public ObaOrganizationResponse createOrganizationFromRegistration(Registration registration) {
 
         RequestBuilder<CreateOrganizationRequest> requestBuilder = (input) -> {
-            String url = obaPortalProperties.getObaBaseUrl() + EndpointDef.Path.POST_ORGANIZATIONS;
+            String url = obaPortalProperties.getObaBaseUrl() + "/organizations";
             HttpPost httpPost = new HttpPost(url);
             JsonHttpEntity<CreateOrganizationRequest> entity = new JsonHttpEntity<>(input);
             httpPost.setEntity(entity);
@@ -44,7 +43,7 @@ public class OrganizationObaGatewayService {
     ObaOrganizationResponse updateOrganization(UpdateObaOrganizationRequest updateObaOrganizationRequest) {
 
         RequestBuilder<UpdateObaOrganizationRequest> requestBuilder = (input) -> {
-            String url = obaPortalProperties.getObaBaseUrl() + EndpointDef.Path.PUT_ORGANIZATIONS;
+            String url = obaPortalProperties.getObaBaseUrl() + "/organizations";
             HttpPut httpPut = new HttpPut(url);
             JsonHttpEntity<UpdateObaOrganizationRequest> entity = new JsonHttpEntity<>(input);
             httpPut.setEntity(entity);
@@ -62,7 +61,7 @@ public class OrganizationObaGatewayService {
     ObaOrganizationResponse findOrganization(UUID id) {
 
         RequestBuilder<UUID> requestBuilder = input -> {
-            String url = obaPortalProperties.getObaBaseUrl() + EndpointDef.Path.GET_ORGANIZATIONS + "/" + id.toString();
+            String url = obaPortalProperties.getObaBaseUrl() +  "/organizations/" + id.toString();
             return new HttpGet(url);
         };
 
