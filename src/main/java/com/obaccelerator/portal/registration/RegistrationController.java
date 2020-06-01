@@ -2,7 +2,6 @@ package com.obaccelerator.portal.registration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.obaccelerator.portal.BotEvaluationResult;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;

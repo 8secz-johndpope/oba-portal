@@ -7,6 +7,7 @@ import com.obaccelerator.portal.portaluser.PortalUserService;
 import com.obaccelerator.portal.shared.session.NoSessionException;
 import com.obaccelerator.portal.shared.session.SessionService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
@@ -44,6 +45,7 @@ public class SessionController {
      * @param portalSessionId
      * @return
      */
+    @Secured("portal_organization")
     @GetMapping(SESSION_URL)
     public Session getActiveSession(@CookieValue(value = "oba_portal_session", required = false) String portalSessionId) {
         return sessionService.findActiveSession(portalSessionId).orElseThrow(NoSessionException::new);
@@ -64,6 +66,7 @@ public class SessionController {
         return session;
     }
 
+    @Secured("portal_organization")
     @DeleteMapping(SESSION_URL)
     public void deleteSession(@CookieValue(value = "oba_portal_session") String portalSessionId) {
         UUID uuid = UUIDParser.fromString(portalSessionId);
