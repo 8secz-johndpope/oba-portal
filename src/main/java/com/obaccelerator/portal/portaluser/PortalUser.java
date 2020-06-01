@@ -1,21 +1,19 @@
 package com.obaccelerator.portal.portaluser;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Value;
 
 import java.time.OffsetDateTime;
+import java.util.List;
 import java.util.UUID;
 
-@Getter
-@Setter
-@AllArgsConstructor
+@Value
 public class PortalUser {
-    private UUID id;
-    private String cognitoUserId;
-    private UUID organizationId;
-    private OffsetDateTime firstLogin;
-    private OffsetDateTime created;
+    UUID id;
+    String cognitoUserId;
+    UUID organizationId;
+    OffsetDateTime firstLogin;
+    OffsetDateTime created;
+    List<String> roles;
 
     public boolean belongsToOrganization(String organizationId) {
         return UUID.fromString(organizationId).equals(this.organizationId);

@@ -87,6 +87,4 @@ public class SessionController {
         cookie.setSecure(true);
         response.addCookie(cookie);
     }
-
-
 }

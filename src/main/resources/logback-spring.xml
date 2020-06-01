@@ -35,7 +35,7 @@
     <logger name="com.obaccelerator" level="debug" />
 
     <!-- LOG everything at INFO level -->
-    <root level="info">
+    <root level="debug">
         <appender-ref ref="RollingFile" />
         <appender-ref ref="Console" />
     </root>

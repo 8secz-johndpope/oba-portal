@@ -1,13 +1,14 @@
 package com.obaccelerator.portal.config;
 
 import com.obaccelerator.common.error.ExceptionHandlingFilter;
-import com.obaccelerator.portal.auth.spring.DummyPreAuthorizedAuthenticationProvider;
-import com.obaccelerator.portal.auth.spring.DummyPreAuthenticatedAuthenticationManager;
-import com.obaccelerator.portal.auth.spring.PreAuthenticationFilter;
+import com.obaccelerator.portal.auth.spring.ObaPortalAuthenticationEntryPoint;
+import com.obaccelerator.portal.auth.spring.PortalPreAuthenticatedAuthenticationManager;
+import com.obaccelerator.portal.auth.spring.PortalPreAuthorizedAuthenticationProvider;
+import com.obaccelerator.portal.auth.spring.CookiePreAuthenticationFilter;
 import com.obaccelerator.portal.portaluser.PortalUserService;
 import com.obaccelerator.portal.shared.session.SessionService;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -29,23 +30,33 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         this.portalUserService = portalUserService;
     }
 
+    /**
+     * Don't use antMatchers on the http object! It doesn't mix with method level security (@PreAuth) annotations.
+     *
+     * @param http
+     * @throws Exception
+     */
     @Override
     protected void configure(HttpSecurity http) throws Exception {
 
-        PreAuthenticationFilter preAuthFilter = new PreAuthenticationFilter(sessionService, portalUserService);
-        preAuthFilter.setAuthenticationManager(new DummyPreAuthenticatedAuthenticationManager());
-
+        CookiePreAuthenticationFilter preAuthFilter = new CookiePreAuthenticationFilter(sessionService, portalUserService);
+        preAuthFilter.setAuthenticationManager(new PortalPreAuthenticatedAuthenticationManager());
         http.csrf().disable()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .authenticationProvider(new DummyPreAuthorizedAuthenticationProvider())
                 .addFilterBefore(new ExceptionHandlingFilter(), CorsFilter.class)
                 .addFilterBefore(preAuthFilter, BasicAuthenticationFilter.class)
                 .authorizeRequests()
-                .antMatchers(HttpMethod.GET, "/pages/**").permitAll() // getting pages allowed
-                .antMatchers(HttpMethod.POST, "/sessions/").permitAll() // creating a new session allowed
-                .antMatchers(HttpMethod.POST, "/registrations/").permitAll() // creating a new registration allowed
                 .anyRequest()
-                .authenticated();
+                .authenticated()
+                .and()
+                .exceptionHandling()
+                .authenticationEntryPoint(new ObaPortalAuthenticationEntryPoint());
+    }
+
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.authenticationProvider(new PortalPreAuthorizedAuthenticationProvider());
     }
 }
