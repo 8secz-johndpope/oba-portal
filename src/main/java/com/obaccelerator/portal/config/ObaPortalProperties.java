@@ -40,8 +40,25 @@ public class ObaPortalProperties {
     @Value("${log.requests.responses.on.error.for.organizations}")
     private boolean logRequestsResponsesOnErrorForOrganizations;
 
+    @Value("${oba.admin.token.signing.keystore.path}")
+    private String adminTokenKeyStorePath;
+
+    @Value("${organization.token.signing.keystore.path}")
+    private String organizationTokenKeyStorePath;
+
+    @Value("${ext_organization-admin-token-signing.keystore.password}")
+    private String organizationTokenKeyStorePassword;
+
+    @Value("${ext_oba-admin-token-signing.keystore.password}")
+    private String adminTokenKeyStorePassword;
+
+    @Value("${application.domain}")
+    private String applicationDomain;
+
+    @Value("${server.servlet.context-path}")
+    private String applicationContextPath;
+
     public String cognitoPublicKeysUrl() {
         return String.format("https://cognito-idp.%s.amazonaws.com/%s/.well-known/jwks.json", cognitoAwsRegion, cognitoUserPoolId);
     }
-
 }

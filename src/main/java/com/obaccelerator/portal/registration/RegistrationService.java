@@ -35,7 +35,8 @@ public class RegistrationService {
     public Registration createRegistration(RegistrationRequest registrationRequest) {
         isAlreadyRegistered(registrationRequest);
         UUID uuid = uuidRepository.newId();
-        registrationRepository.createRegistration(uuid, registrationRequest.getCognitoUserId(), registrationRequest.getOrganizationName());
+        registrationRepository.createRegistration(uuid, registrationRequest.getCognitoUserId(),
+                registrationRequest.getOrganizationName());
         return registrationRepository.findRegistration(uuid).get();
     }
 

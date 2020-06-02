@@ -2,6 +2,7 @@ package com.obaccelerator.portal.certificate;
 
 import com.obaccelerator.common.http.*;
 import com.obaccelerator.portal.config.ObaPortalProperties;
+import com.obaccelerator.portal.token.TokenProviderService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -16,20 +17,23 @@ public class CertificateObaGatewayService {
 
     private final HttpClient obaHttpClient;
     private final ObaPortalProperties obaPortalProperties;
+    private TokenProviderService tokenProviderService;
 
-    public CertificateObaGatewayService(HttpClient obaHttpClient, ObaPortalProperties obaPortalProperties) {
+    public CertificateObaGatewayService(HttpClient obaHttpClient, ObaPortalProperties obaPortalProperties,
+                                        TokenProviderService tokenProviderService) {
         this.obaHttpClient = obaHttpClient;
         this.obaPortalProperties = obaPortalProperties;
+        this.tokenProviderService = tokenProviderService;
     }
 
-    public CertificateResponse createCertificateInOba(CreateOrganizationCertificateRequest certificateRequest, String organizationId) {
+    public CertificateResponse createCertificateInOba(CreateOrganizationCertificateRequest certificateRequest, UUID organizationId) {
 
         RequestBuilder<CreateOrganizationCertificateRequest> requestBuilder = (input) -> {
             String url = obaPortalProperties.getObaBaseUrl() + "/" + organizationId + "/certificates";
             HttpPost httpPost = new HttpPost(url);
             JsonHttpEntity<CreateOrganizationCertificateRequest> entity = new JsonHttpEntity<>(input);
             httpPost.setEntity(entity);
-            return httpPost;
+            return tokenProviderService.addOrganizationToken(httpPost, organizationId);
         };
 
         return new RequestExecutor.Builder<>(requestBuilder, obaHttpClient, CertificateResponse.class)
@@ -42,7 +46,10 @@ public class CertificateObaGatewayService {
 
     public CertificateListResponse findAllForOrganization(UUID organizationId) {
 
-        RequestBuilder<UUID> requestBuilder = (input) -> new HttpGet(obaPortalProperties.getObaBaseUrl() + "/" + organizationId + "/certificates");
+        RequestBuilder<UUID> requestBuilder = (input) -> {
+            HttpGet httpGet = new HttpGet(obaPortalProperties.getObaBaseUrl() + "/" + organizationId + "/certificates");
+            return tokenProviderService.addOrganizationToken(httpGet, organizationId);
+        };
 
         return new RequestExecutor.Builder<>(requestBuilder, obaHttpClient, CertificateListResponse.class)
                 .addResponseValidator(new ResponseNotEmptyValidator())
@@ -53,7 +60,11 @@ public class CertificateObaGatewayService {
     }
 
     public CertificateResponse findOneForOrganization(UUID organizationId, UUID certificateId) {
-        RequestBuilder<UUID> requestBuilder = (input) -> new HttpGet(obaPortalProperties.getObaBaseUrl() + "/" + organizationId + "/certificates/" + certificateId);
+
+        RequestBuilder<UUID> requestBuilder = (input) -> {
+            HttpGet httpGet = new HttpGet(obaPortalProperties.getObaBaseUrl() + "/" + organizationId + "/certificates/" + certificateId);
+            return tokenProviderService.addOrganizationToken(httpGet, organizationId);
+        };
 
         return new RequestExecutor.Builder<>(requestBuilder, obaHttpClient, CertificateResponse.class)
                 .addResponseValidator(new ResponseNotEmptyValidator())

@@ -62,11 +62,12 @@ public class PortalUserRepository {
 
     public Optional<PortalUser> findById(UUID id, UUID organizationId) {
         return Optional.ofNullable(DataAccessUtils.singleResult(
-                namedParameterJdbcTemplate.query("SELECT BIN_TO_UUID(portal_user.id) as realId,  " +
-                                "BIN_TO_UUID(portal_user.organization_id) as realOrganizationId, portal_user.* " +
-                                "FROM obaportal.portal_user " +
-                                "WHERE id = UUID_TO_BIN(:id) AND organization_id = UUID_TO_BIN(:orgId)",
-                        new HashMap<String, Object>() {
+                namedParameterJdbcTemplate.query("SELECT BIN_TO_UUID(u.id) as realId,  " +
+                                "BIN_TO_UUID(u.organization_id) as realOrganizationId, u.*, r.role " +
+                                "FROM obaportal.portal_user u INNER JOIN obaportal.portal_user_2_role r " +
+                                "ON r.portal_user_id = u.id " +
+                                "WHERE u.id = UUID_TO_BIN(:id) and u.organization_id = UUID_TO_BIN(:orgId)",
+                        new HashMap<>() {
                             {
                                 put("id", id.toString());
                                 put("orgId", organizationId.toString());

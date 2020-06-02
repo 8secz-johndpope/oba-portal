@@ -43,13 +43,13 @@ public class CookiePreAuthenticationFilter extends AbstractPreAuthenticatedProce
                         if (portalUserOptional.isPresent()) {
                             log.debug("Found logged in user with id " + portalUserOptional.get().getId() + ". Updating session last used time");
                             sessionService.updateSessionLastUsed(session.getId());
-                            return authenticationWithRole(ROLE_PORTAL_ORGANIZATION);
+                            return authenticationWithRole(portalUserOptional.get(), ROLE_PORTAL_ORGANIZATION);
                         }
                     }
                 }
             }
         }
-        return authenticationWithRole(ROLE_OBA_ANONYMOUS);
+        return authenticationWithRole(null, ROLE_OBA_ANONYMOUS);
     }
 
     @Override
@@ -57,8 +57,18 @@ public class CookiePreAuthenticationFilter extends AbstractPreAuthenticatedProce
         return "";
     }
 
-    private PreAuthenticatedAuthenticationToken authenticationWithRole(String role) {
-        return new PreAuthenticatedAuthenticationToken((Principal) () -> "oba", null,
+    private PreAuthenticatedAuthenticationToken authenticationWithRole(PortalUser portalUser, String role) {
+        PreAuthenticatedAuthenticationToken token = new PreAuthenticatedAuthenticationToken((Principal) () -> "oba", null,
                 Collections.singletonList(new SimpleGrantedAuthority(role)));
+        token.setDetails(portalUser);
+        return token;
+    }
+
+    private class ObaPrincipal implements Principal {
+
+        @Override
+        public String getName() {
+            return "oba";
+        }
     }
 }

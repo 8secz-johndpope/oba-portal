@@ -6,6 +6,7 @@ import com.obaccelerator.portal.portaluser.PortalUser;
 import com.obaccelerator.portal.portaluser.PortalUserService;
 import com.obaccelerator.portal.registration.Registration;
 import com.obaccelerator.portal.registration.RegistrationService;
+import com.obaccelerator.portal.token.TokenProviderService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,9 +24,9 @@ import java.util.Optional;
 @Service
 public class FirstTimeSessionService {
 
-    private RegistrationService registrationService;
-    private OrganizationObaGatewayService organizationObaGatewayService;
-    private PortalUserService portalUserService;
+    private final RegistrationService registrationService;
+    private final OrganizationObaGatewayService organizationObaGatewayService;
+    private final PortalUserService portalUserService;
 
     public FirstTimeSessionService(RegistrationService registrationService,
                                    OrganizationObaGatewayService organizationObaGatewayService,

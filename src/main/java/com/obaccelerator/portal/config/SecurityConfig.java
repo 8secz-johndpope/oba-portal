@@ -1,25 +1,30 @@
 package com.obaccelerator.portal.config;
 
 import com.obaccelerator.common.error.ExceptionHandlingFilter;
+import com.obaccelerator.portal.auth.spring.CookiePreAuthenticationFilter;
 import com.obaccelerator.portal.auth.spring.ObaPortalAuthenticationEntryPoint;
 import com.obaccelerator.portal.auth.spring.PortalPreAuthenticatedAuthenticationManager;
 import com.obaccelerator.portal.auth.spring.PortalPreAuthorizedAuthenticationProvider;
-import com.obaccelerator.portal.auth.spring.CookiePreAuthenticationFilter;
 import com.obaccelerator.portal.portaluser.PortalUserService;
 import com.obaccelerator.portal.shared.session.SessionService;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.access.AccessDecisionManager;
+import org.springframework.security.access.vote.UnanimousBased;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.web.access.expression.WebExpressionVoter;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.web.filter.CorsFilter;
 
+import java.util.Collections;
+
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(securedEnabled = true)
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final SessionService sessionService;
@@ -56,7 +61,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+    protected void configure(AuthenticationManagerBuilder auth) {
         auth.authenticationProvider(new PortalPreAuthorizedAuthenticationProvider());
     }
+
 }

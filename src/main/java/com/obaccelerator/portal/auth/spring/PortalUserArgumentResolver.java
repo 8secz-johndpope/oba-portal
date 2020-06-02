@@ -2,7 +2,6 @@ package com.obaccelerator.portal.auth.spring;
 
 import com.obaccelerator.portal.portaluser.PortalUser;
 import org.springframework.core.MethodParameter;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.support.WebDataBinderFactory;
@@ -27,8 +26,8 @@ public class PortalUserArgumentResolver implements HandlerMethodArgumentResolver
         Principal userPrincipal = webRequest.getUserPrincipal();
         if (userPrincipal != null) {
             PreAuthenticatedAuthenticationToken preAuthToken = (PreAuthenticatedAuthenticationToken) userPrincipal;
-            UsernamePasswordAuthenticationToken upToken = (UsernamePasswordAuthenticationToken) preAuthToken.getPrincipal();
-            return upToken.getDetails();
+            PreAuthenticatedAuthenticationToken innerToken = (PreAuthenticatedAuthenticationToken) preAuthToken.getPrincipal();
+            return innerToken.getDetails();
         }
         return null;
     }

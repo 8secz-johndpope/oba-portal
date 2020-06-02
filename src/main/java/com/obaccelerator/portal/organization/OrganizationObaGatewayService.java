@@ -3,6 +3,7 @@ package com.obaccelerator.portal.organization;
 import com.obaccelerator.common.http.*;
 import com.obaccelerator.portal.config.ObaPortalProperties;
 import com.obaccelerator.portal.registration.Registration;
+import com.obaccelerator.portal.token.TokenProviderService;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -16,14 +17,16 @@ public class OrganizationObaGatewayService {
 
     private final HttpClient obaHttpClient;
     private final ObaPortalProperties obaPortalProperties;
+    private final TokenProviderService tokenProviderService;
 
-    public OrganizationObaGatewayService(HttpClient obaHttpClient, ObaPortalProperties obaPortalProperties) {
+    public OrganizationObaGatewayService(HttpClient obaHttpClient, ObaPortalProperties obaPortalProperties,
+                                         TokenProviderService tokenProviderService) {
         this.obaHttpClient = obaHttpClient;
         this.obaPortalProperties = obaPortalProperties;
+        this.tokenProviderService = tokenProviderService;
     }
 
     public ObaOrganizationResponse createOrganizationFromRegistration(Registration registration) {
-
         RequestBuilder<CreateOrganizationRequest> requestBuilder = (input) -> {
             String url = obaPortalProperties.getObaBaseUrl() + "/organizations";
             HttpPost httpPost = new HttpPost(url);
@@ -62,7 +65,8 @@ public class OrganizationObaGatewayService {
 
         RequestBuilder<UUID> requestBuilder = input -> {
             String url = obaPortalProperties.getObaBaseUrl() +  "/organizations/" + id.toString();
-            return new HttpGet(url);
+            HttpGet httpGet = new HttpGet(url);
+            return tokenProviderService.addOrganizationToken(httpGet, id);
         };
 
         return new RequestExecutor.Builder<>(requestBuilder, obaHttpClient, ObaOrganizationResponse.class)

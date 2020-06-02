@@ -12,7 +12,7 @@ public class PortalPreAuthenticatedAuthenticationManager implements Authenticati
         PreAuthenticatedAuthenticationToken token = (PreAuthenticatedAuthenticationToken) authentication;
         PreAuthenticatedAuthenticationToken innerToken = (PreAuthenticatedAuthenticationToken) token.getPrincipal();
         if (innerToken.isAuthenticated() && innerToken.getAuthorities() != null && innerToken.getAuthorities().size() > 0) {
-            return new PreAuthenticatedAuthenticationToken(authentication.getPrincipal(), null, innerToken.getAuthorities());
+            return new PreAuthenticatedAuthenticationToken(innerToken, null, innerToken.getAuthorities());
         }
 
         throw new InsufficientAuthenticationException("Not authenticated");
