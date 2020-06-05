@@ -17,7 +17,7 @@ public class RedirectUrlController {
     }
 
     @PreAuthorize("hasAuthority('portal_organization')")
-    @GetMapping("/redirect-urls/{organizationId}")
+    @GetMapping("/redirect-urls")
     public List<RedirectUrl> getRedirectUrlsForOrganization(PortalUser portalUser) {
         return redirectUrlGatewayService.findAllForOrganization(portalUser.getOrganizationId());
     }

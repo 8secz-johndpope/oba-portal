@@ -1,6 +1,7 @@
 package com.obaccelerator.portal.certificate;
 
 import com.obaccelerator.common.uuid.UUIDParser;
+import com.obaccelerator.portal.portaluser.PortalUser;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,22 +17,21 @@ public class CertificateController {
     }
 
     @PreAuthorize("hasAuthority('portal_organization')")
-    @PostMapping("/organization/{organizationId}/certificates")
-    public CertificateResponse create(@Valid @RequestBody CreateOrganizationCertificateRequest request,
-                                      @PathVariable String organizationId) {
-        return certificateObaGatewayService.createCertificateInOba(request, UUIDParser.fromString(organizationId));
+    @PostMapping("/certificates")
+    public CertificateResponse create(@Valid @RequestBody CreateOrganizationCertificateRequest request, PortalUser portalUser) {
+        return certificateObaGatewayService.createCertificateInOba(request, portalUser.getOrganizationId());
     }
 
     @PreAuthorize("hasAuthority('portal_organization')")
-    @GetMapping("/organization/{organizationId}/certificates")
-    public CertificateListResponse findAll(@PathVariable String organizationId) {
-        return certificateObaGatewayService.findAllForOrganization(UUIDParser.fromString(organizationId));
+    @GetMapping("/certificates")
+    public CertificateListResponse findAll(PortalUser portalUser) {
+        return certificateObaGatewayService.findAllForOrganization(portalUser.getOrganizationId());
     }
 
     @PreAuthorize("hasAuthority('portal_organization')")
-    @GetMapping("/organization/{organizationId}/certificates/{certificateId}")
-    public CertificateResponse findOne(@PathVariable String organizationId, @PathVariable String certificateId) {
-        return certificateObaGatewayService.findOneForOrganization(UUIDParser.fromString(organizationId),
+    @GetMapping("/certificates/{certificateId}")
+    public CertificateResponse findOne(@PathVariable String certificateId, PortalUser portalUser) {
+        return certificateObaGatewayService.findOneForOrganization(portalUser.getOrganizationId(),
                 UUIDParser.fromString(certificateId));
     }
 }
