@@ -29,7 +29,7 @@ public class CertificateObaGatewayService {
     public CertificateResponse createCertificateInOba(CreateOrganizationCertificateRequest certificateRequest, UUID organizationId) {
 
         RequestBuilder<CreateOrganizationCertificateRequest> requestBuilder = (input) -> {
-            String url = obaPortalProperties.getObaBaseUrl() + "/" + organizationId + "/certificates";
+            String url = obaPortalProperties.getObaBaseUrl() + "/certificates";
             HttpPost httpPost = new HttpPost(url);
             JsonHttpEntity<CreateOrganizationCertificateRequest> entity = new JsonHttpEntity<>(input);
             httpPost.setEntity(entity);
@@ -47,7 +47,8 @@ public class CertificateObaGatewayService {
     public CertificateListResponse findAllForOrganization(UUID organizationId) {
 
         RequestBuilder<UUID> requestBuilder = (input) -> {
-            HttpGet httpGet = new HttpGet(obaPortalProperties.getObaBaseUrl() + "/" + organizationId + "/certificates");
+            String url = obaPortalProperties.getObaBaseUrl() + "/certificates";
+            HttpGet httpGet = new HttpGet(url);
             return tokenProviderService.addOrganizationToken(httpGet, organizationId);
         };
 
@@ -62,7 +63,8 @@ public class CertificateObaGatewayService {
     public CertificateResponse findOneForOrganization(UUID organizationId, UUID certificateId) {
 
         RequestBuilder<UUID> requestBuilder = (input) -> {
-            HttpGet httpGet = new HttpGet(obaPortalProperties.getObaBaseUrl() + "/" + organizationId + "/certificates/" + certificateId);
+            String url = obaPortalProperties.getObaBaseUrl() + "/certificates/" + certificateId;
+            HttpGet httpGet = new HttpGet(url);
             return tokenProviderService.addOrganizationToken(httpGet, organizationId);
         };
 

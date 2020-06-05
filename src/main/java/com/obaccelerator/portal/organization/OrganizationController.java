@@ -4,7 +4,6 @@ import com.obaccelerator.common.uuid.UUIDParser;
 import com.obaccelerator.portal.auth.NotAuthorizedException;
 import com.obaccelerator.portal.portaluser.PortalUser;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 

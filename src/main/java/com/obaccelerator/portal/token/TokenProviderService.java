@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import java.util.UUID;
 
 import static com.obaccelerator.common.ObaConstant.ROLE_PORTAL_ADMIN;
-import static com.obaccelerator.common.ObaConstant.ROLE_PORTAL_ORGANIZATION;
 
 @Service
 public class TokenProviderService {
@@ -30,7 +29,7 @@ public class TokenProviderService {
     }
 
     private String getOrganizationToken(UUID organizationId) {
-        return organizationTokenGenerator.generateInternalToken(organizationId.toString(), ROLE_PORTAL_ORGANIZATION);
+        return organizationTokenGenerator.generateOrganizationToken(organizationId.toString());
     }
 
     private String getObaAdminToken() {
