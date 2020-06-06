@@ -64,7 +64,6 @@ public class RedirectUrlGatewayService {
         };
 
         new RequestExecutor.Builder<>(requestBuilder, obaHttpClient, Void.class)
-                .addResponseValidator(new ResponseNotEmptyValidator())
                 .addResponseValidator(new ExpectedHttpCodesValidator(204))
                 .logRequestResponsesOnError(obaPortalProperties.isLogRequestsResponsesOnErrorForOrganizations())
                 .build()
