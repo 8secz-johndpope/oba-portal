@@ -25,7 +25,8 @@ public class CertificateController {
     @PreAuthorize("hasAuthority('portal_organization')")
     @GetMapping("/certificates")
     public CertificateListResponse findAll(PortalUser portalUser) {
-        return certificateObaGatewayService.findAllForOrganization(portalUser.getOrganizationId());
+        CertificateListResponse allForOrganization = certificateObaGatewayService.findAllForOrganization(portalUser.getOrganizationId());
+        return allForOrganization;
     }
 
     @PreAuthorize("hasAuthority('portal_organization')")
