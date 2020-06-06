@@ -4,6 +4,7 @@ import com.obaccelerator.common.http.*;
 import com.obaccelerator.portal.config.ObaPortalProperties;
 import com.obaccelerator.portal.token.TokenProviderService;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.springframework.stereotype.Service;
@@ -54,5 +55,19 @@ public class RedirectUrlGatewayService {
                 .logRequestResponsesOnError(obaPortalProperties.isLogRequestsResponsesOnErrorForOrganizations())
                 .build()
                 .execute(redirectUrlRequest);
+    }
+
+    public void delete(UUID organizationId, UUID redirectUrlId) {
+        RequestBuilder<UUID> requestBuilder = (input) -> {
+            HttpDelete httpDelete = new HttpDelete(obaPortalProperties.getObaBaseUrl() + "/redirect-urls/" + input.toString());
+            return tokenProviderService.addOrganizationToken(httpDelete, organizationId);
+        };
+
+        new RequestExecutor.Builder<>(requestBuilder, obaHttpClient, Void.class)
+                .addResponseValidator(new ResponseNotEmptyValidator())
+                .addResponseValidator(new ExpectedHttpCodesValidator(204))
+                .logRequestResponsesOnError(obaPortalProperties.isLogRequestsResponsesOnErrorForOrganizations())
+                .build()
+                .execute(redirectUrlId);
     }
 }
