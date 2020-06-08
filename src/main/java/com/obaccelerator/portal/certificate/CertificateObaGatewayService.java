@@ -9,7 +9,10 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.springframework.stereotype.Service;
 
+import java.time.OffsetDateTime;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -44,7 +47,7 @@ public class CertificateObaGatewayService {
                 .execute(certificateRequest);
     }
 
-    public CertificateListResponse findAllForOrganization(UUID organizationId) {
+    public CertificateListResponse findAllForOrganization(UUID organizationId, boolean nonExpiredOnly) {
 
         RequestBuilder<UUID> requestBuilder = (input) -> {
             String url = obaPortalProperties.getObaBaseUrl() + "/certificates";
@@ -52,12 +55,21 @@ public class CertificateObaGatewayService {
             return tokenProviderService.addOrganizationToken(httpGet, organizationId);
         };
 
-        return new RequestExecutor.Builder<>(requestBuilder, obaHttpClient, CertificateListResponse.class)
+        CertificateListResponse resp = new RequestExecutor.Builder<>(requestBuilder, obaHttpClient, CertificateListResponse.class)
                 .addResponseValidator(new ResponseNotEmptyValidator())
                 .addResponseValidator(new ExpectedHttpCodesValidator(200))
                 .logRequestResponsesOnError(obaPortalProperties.isLogRequestsResponsesOnErrorForOrganizations())
                 .build()
                 .execute(organizationId);
+
+        if (nonExpiredOnly) {
+            List<CertificateResponse> collect = resp.stream().filter(c -> OffsetDateTime.now().isBefore(c.getValidUntil())).collect(Collectors.toList());
+            CertificateListResponse response = new CertificateListResponse();
+            response.addAll(collect);
+            return response;
+        }
+
+        return resp;
     }
 
     public CertificateResponse findOneForOrganization(UUID organizationId, UUID certificateId) {

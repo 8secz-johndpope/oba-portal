@@ -1,7 +1,9 @@
 package com.obaccelerator.portal.organization;
 
 import com.obaccelerator.common.http.*;
+import com.obaccelerator.common.uuid.UUIDParser;
 import com.obaccelerator.portal.config.ObaPortalProperties;
+import com.obaccelerator.portal.portaluser.PortalUser;
 import com.obaccelerator.portal.registration.Registration;
 import com.obaccelerator.portal.token.TokenProviderService;
 import org.apache.http.client.HttpClient;
@@ -43,13 +45,14 @@ public class OrganizationObaGatewayService {
                 .execute(new CreateOrganizationRequest(registration.getOrganizationName()));
     }
 
-    ObaOrganizationResponse updateOrganization(UpdateObaOrganizationRequest updateObaOrganizationRequest) {
+    ObaOrganizationResponse updateOrganization(UpdateObaOrganizationRequest updateObaOrganizationRequest, PortalUser portalUser) {
 
         RequestBuilder<UpdateObaOrganizationRequest> requestBuilder = (input) -> {
             String url = obaPortalProperties.getObaBaseUrl() + "/organizations";
             HttpPut httpPut = new HttpPut(url);
             JsonHttpEntity<UpdateObaOrganizationRequest> entity = new JsonHttpEntity<>(input);
             httpPut.setEntity(entity);
+            tokenProviderService.addOrganizationToken(httpPut, portalUser.getOrganizationId());
             return httpPut;
         };
 

@@ -69,7 +69,7 @@ public class SessionController {
         return session;
     }
 
-    @PreAuthorize("hasAuthority('portal_organization')")
+    @PreAuthorize("hasRole('ROLE_ORGANIZATION')")
     @DeleteMapping("/sessions")
     public void deleteSession(@CookieValue(value = "oba_portal_session") String portalSessionId) {
         UUID uuid = UUIDParser.fromString(portalSessionId);

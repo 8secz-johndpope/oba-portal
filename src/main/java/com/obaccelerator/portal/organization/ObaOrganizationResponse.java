@@ -7,6 +7,8 @@ import lombok.Setter;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
+import static org.apache.commons.lang3.StringUtils.isBlank;
+
 @Getter
 @Setter
 public class ObaOrganizationResponse extends RestResponse {
@@ -18,4 +20,8 @@ public class ObaOrganizationResponse extends RestResponse {
     private String postalCode;
     private String country;
     private OffsetDateTime created;
+
+    public boolean isComplete() {
+        return !isBlank(name) && !isBlank(street) && !isBlank(streetNumber) && !isBlank(postalCode) && !isBlank(country);
+    }
 }

@@ -7,7 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 import java.util.UUID;
 
-import static com.obaccelerator.common.ObaConstant.ROLE_PORTAL_ORGANIZATION;
+import static com.obaccelerator.common.ObaConstant.ORGANIZATION;
 
 @Service
 public class PortalUserService {
@@ -32,7 +32,7 @@ public class PortalUserService {
     public PortalUser createPortalUserForCognitoUser(String cognitoUserId, UUID organizationId) {
         UUID uuid = uuidRepository.newId();
         portalUserRepository.createPortalUser(uuid, cognitoUserId, organizationId);
-        portalUserRepository.createRoleLink(uuid, ROLE_PORTAL_ORGANIZATION);
+        portalUserRepository.createRoleLink(uuid, ORGANIZATION);
         return portalUserRepository.findPortalUserByCognitoId(cognitoUserId).get();
     }
 }

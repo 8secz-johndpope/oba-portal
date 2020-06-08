@@ -15,8 +15,9 @@ import java.security.Principal;
 import java.util.Collections;
 import java.util.Optional;
 
-import static com.obaccelerator.common.ObaConstant.ROLE_OBA_ANONYMOUS;
-import static com.obaccelerator.common.ObaConstant.ROLE_PORTAL_ORGANIZATION;
+
+import static com.obaccelerator.common.ObaConstant.ANONYMOUS;
+import static com.obaccelerator.common.ObaConstant.ORGANIZATION;
 import static com.obaccelerator.portal.ObaPortalApplication.SESSION_COOKIE_NAME;
 
 @Slf4j
@@ -43,13 +44,13 @@ public class CookiePreAuthenticationFilter extends AbstractPreAuthenticatedProce
                         if (portalUserOptional.isPresent()) {
                             log.debug("Found logged in user with id " + portalUserOptional.get().getId() + ". Updating session last used time");
                             sessionService.updateSessionLastUsed(session.getId());
-                            return authenticationWithRole(portalUserOptional.get(), ROLE_PORTAL_ORGANIZATION);
+                            return authenticationWithRole(portalUserOptional.get(), ORGANIZATION);
                         }
                     }
                 }
             }
         }
-        return authenticationWithRole(null, ROLE_OBA_ANONYMOUS);
+        return authenticationWithRole(null, ANONYMOUS);
     }
 
     @Override
