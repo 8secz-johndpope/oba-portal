@@ -1,7 +1,6 @@
 package com.obaccelerator.portal.organization;
 
 import com.obaccelerator.common.http.*;
-import com.obaccelerator.common.uuid.UUIDParser;
 import com.obaccelerator.portal.config.ObaPortalProperties;
 import com.obaccelerator.portal.portaluser.PortalUser;
 import com.obaccelerator.portal.registration.Registration;
@@ -40,7 +39,7 @@ public class OrganizationObaGatewayService {
         return new RequestExecutor.Builder<>(requestBuilder, obaHttpClient, ObaOrganizationResponse.class)
                 .addResponseValidator(new ResponseNotEmptyValidator())
                 .addResponseValidator(new ExpectedHttpCodesValidator(201))
-                .logRequestResponsesOnError(obaPortalProperties.isLogRequestsResponsesOnErrorForOrganizations())
+                .logRequestResponsesOnError(obaPortalProperties.isLogRequestsAndResponsesOnError())
                 .build()
                 .execute(new CreateOrganizationRequest(registration.getOrganizationName()));
     }
@@ -59,7 +58,7 @@ public class OrganizationObaGatewayService {
         return new RequestExecutor.Builder<>(requestBuilder, obaHttpClient, ObaOrganizationResponse.class)
                 .addResponseValidator(new ResponseNotEmptyValidator())
                 .addResponseValidator(new ExpectedHttpCodesValidator(200))
-                .logRequestResponsesOnError(obaPortalProperties.isLogRequestsResponsesOnErrorForOrganizations())
+                .logRequestResponsesOnError(obaPortalProperties.isLogRequestsAndResponsesOnError())
                 .build()
                 .execute(updateObaOrganizationRequest);
     }
@@ -75,7 +74,7 @@ public class OrganizationObaGatewayService {
         return new RequestExecutor.Builder<>(requestBuilder, obaHttpClient, ObaOrganizationResponse.class)
                 .addResponseValidator(new ResponseNotEmptyValidator())
                 .addResponseValidator(new ExpectedHttpCodesValidator(200))
-                .logRequestResponsesOnError(obaPortalProperties.isLogRequestsResponsesOnErrorForOrganizations())
+                .logRequestResponsesOnError(obaPortalProperties.isLogRequestsAndResponsesOnError())
                 .build()
                 .execute(id);
     }

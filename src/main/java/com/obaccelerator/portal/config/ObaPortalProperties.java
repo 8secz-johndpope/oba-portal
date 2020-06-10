@@ -37,8 +37,8 @@ public class ObaPortalProperties {
     @Value("${oba.base.url}")
     private String obaBaseUrl;
 
-    @Value("${log.requests.responses.on.error.for.organizations}")
-    private boolean logRequestsResponsesOnErrorForOrganizations;
+    @Value("${log.requests.responses.on.error}")
+    private boolean logRequestsAndResponsesOnError;
 
     @Value("${oba.admin.token.signing.keystore.path}")
     private String adminTokenKeyStorePath;

@@ -42,7 +42,7 @@ public class CertificateObaGatewayService {
         return new RequestExecutor.Builder<>(requestBuilder, obaHttpClient, CertificateResponse.class)
                 .addResponseValidator(new ResponseNotEmptyValidator())
                 .addResponseValidator(new ExpectedHttpCodesValidator(201))
-                .logRequestResponsesOnError(obaPortalProperties.isLogRequestsResponsesOnErrorForOrganizations())
+                .logRequestResponsesOnError(obaPortalProperties.isLogRequestsAndResponsesOnError())
                 .build()
                 .execute(certificateRequest);
     }
@@ -58,7 +58,7 @@ public class CertificateObaGatewayService {
         CertificateListResponse resp = new RequestExecutor.Builder<>(requestBuilder, obaHttpClient, CertificateListResponse.class)
                 .addResponseValidator(new ResponseNotEmptyValidator())
                 .addResponseValidator(new ExpectedHttpCodesValidator(200))
-                .logRequestResponsesOnError(obaPortalProperties.isLogRequestsResponsesOnErrorForOrganizations())
+                .logRequestResponsesOnError(obaPortalProperties.isLogRequestsAndResponsesOnError())
                 .build()
                 .execute(organizationId);
 
@@ -83,7 +83,7 @@ public class CertificateObaGatewayService {
         return new RequestExecutor.Builder<>(requestBuilder, obaHttpClient, CertificateResponse.class)
                 .addResponseValidator(new ResponseNotEmptyValidator())
                 .addResponseValidator(new ExpectedHttpCodesValidator(200))
-                .logRequestResponsesOnError(obaPortalProperties.isLogRequestsResponsesOnErrorForOrganizations())
+                .logRequestResponsesOnError(obaPortalProperties.isLogRequestsAndResponsesOnError())
                 .build()
                 .execute(organizationId);
     }

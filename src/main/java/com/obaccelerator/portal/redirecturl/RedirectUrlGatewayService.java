@@ -36,7 +36,7 @@ public class RedirectUrlGatewayService {
         return new RequestExecutor.Builder<>(requestBuilder, obaHttpClient, RedirectUrlListResponse.class)
                 .addResponseValidator(new ResponseNotEmptyValidator())
                 .addResponseValidator(new ExpectedHttpCodesValidator(200))
-                .logRequestResponsesOnError(obaPortalProperties.isLogRequestsResponsesOnErrorForOrganizations())
+                .logRequestResponsesOnError(obaPortalProperties.isLogRequestsAndResponsesOnError())
                 .build()
                 .execute(organizationId);
     }
@@ -52,7 +52,7 @@ public class RedirectUrlGatewayService {
         return new RequestExecutor.Builder<>(requestBuilder, obaHttpClient, RedirectUrlResponse.class)
                 .addResponseValidator(new ResponseNotEmptyValidator())
                 .addResponseValidator(new ExpectedHttpCodesValidator(201))
-                .logRequestResponsesOnError(obaPortalProperties.isLogRequestsResponsesOnErrorForOrganizations())
+                .logRequestResponsesOnError(obaPortalProperties.isLogRequestsAndResponsesOnError())
                 .build()
                 .execute(redirectUrlRequest);
     }
@@ -65,7 +65,7 @@ public class RedirectUrlGatewayService {
 
         new RequestExecutor.Builder<>(requestBuilder, obaHttpClient, Void.class)
                 .addResponseValidator(new ExpectedHttpCodesValidator(204))
-                .logRequestResponsesOnError(obaPortalProperties.isLogRequestsResponsesOnErrorForOrganizations())
+                .logRequestResponsesOnError(obaPortalProperties.isLogRequestsAndResponsesOnError())
                 .build()
                 .execute(redirectUrlId);
     }
