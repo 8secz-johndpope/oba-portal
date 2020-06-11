@@ -10,5 +10,5 @@ public class Bank {
     String displayName;
     List<BankGroup> groups;
     boolean beta;
-    List<BankApi> bankApis;
+    List<Api> apis;
 }

@@ -5,7 +5,7 @@ import lombok.Value;
 import java.util.List;
 
 @Value
-public class BankApi {
+public class Api {
     List<MainService> mainServices;
     String type;
     String baseUrl;
