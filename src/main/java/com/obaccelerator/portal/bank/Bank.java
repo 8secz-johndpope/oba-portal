@@ -8,7 +8,8 @@ import java.util.List;
 public class Bank {
     String bankSystemName;
     String displayName;
-    List<BankGroup> groups;
+    String implementationKey;
     boolean beta;
+    List<BankGroup> groups;
     List<Api> apis;
 }

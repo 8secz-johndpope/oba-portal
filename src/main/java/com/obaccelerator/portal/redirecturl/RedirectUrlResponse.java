@@ -11,7 +11,7 @@ import java.util.UUID;
 @Value
 public class RedirectUrlResponse extends RestResponse {
 
-    private UUID id;
+    UUID id;
     private UUID organizationId;
     private String redirectUrl;
     private OffsetDateTime created;

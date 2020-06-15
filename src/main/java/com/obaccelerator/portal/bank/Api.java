@@ -3,9 +3,11 @@ package com.obaccelerator.portal.bank;
 import lombok.Value;
 
 import java.util.List;
+import java.util.UUID;
 
 @Value
 public class Api {
+    UUID id;
     List<MainService> mainServices;
     String type;
     String baseUrl;
