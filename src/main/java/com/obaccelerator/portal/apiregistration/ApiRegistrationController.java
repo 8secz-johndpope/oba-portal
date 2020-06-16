@@ -20,16 +20,19 @@ public class ApiRegistrationController {
     }
 
     @GetMapping("/api-registrations/{apiId}")
-    public List<ApiRegistrationStepDefinition> findRegistrationAttemps(PortalUser portalUser,
-                                                                       @PathVariable("apiId") UUID apiId) {
-        return null;
+    public List<ApiRegistration> findApiRegistrationsForApi(PortalUser portalUser,
+                                                            @PathVariable("apiId") UUID apiId) {
+        return apiRegistrationGatewayService.findApiRegistrations(new ByOrganizationAndApi(portalUser.getOrganizationId(), apiId));
     }
 
     @GetMapping("/api-registrations")
-    public List<ApiRegistrationStepResult> findApiRegistrationStepResults(PortalUser portalUser,
-                                                                          @PathVariable("apiId") UUID apiId) {
-        return null;
+    public List<ApiRegistration> findApiRegistrationsForOrganization(PortalUser portalUser) {
+        return apiRegistrationGatewayService.findRegistrationsForOrganization(portalUser.getOrganizationId());
     }
 
-
+    @GetMapping("/api-registration-steps/{apiId}")
+    public ApiRegistrationSteps findApiRegistrationStepResults(PortalUser portalUser, @PathVariable("apiId") UUID apiId) {
+        return apiRegistrationGatewayService
+                .findApiRegistrationSteps(new ByOrganizationAndApi(portalUser.getOrganizationId(), apiId));
+    }
 }

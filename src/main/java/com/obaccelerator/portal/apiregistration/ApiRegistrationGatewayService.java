@@ -28,18 +28,67 @@ public class ApiRegistrationGatewayService {
         this.httpClient = httpClient;
     }
 
-    public List<ApiRegistrationStepResult> find(UUID organizationId, UUID apiId) {
+    public List<ApiRegistration> findApiRegistrations(ByOrganizationAndApi byOrganizationAndApi) {
+        RequestBuilder<ByOrganizationAndApi> requestBuilder = (input) -> {
+            String url = obaPortalProperties.getObaBaseUrl() + "/api-registrations/" + input.getApiId();
+            HttpGet httpGet = new HttpGet(url);
+            return tokenProviderService.addOrganizationToken(httpGet, byOrganizationAndApi.getOrganizationId());
+        };
+
+        return new RequestExecutor.Builder<>(requestBuilder, httpClient, ApiRegistrationList.class)
+                .addResponseValidator(new ResponseNotEmptyValidator())
+                .addResponseValidator(new ExpectedHttpCodesValidator(200))
+                .logRequestResponsesOnError(obaPortalProperties.isLogRequestsAndResponsesOnError())
+                .build()
+                .execute(byOrganizationAndApi);
+    }
+
+    public List<ApiRegistration> findRegistrationsForOrganization(UUID organizationId) {
         RequestBuilder<UUID> requestBuilder = (input) -> {
-            String url = obaPortalProperties.getObaBaseUrl() + "/api-registration-step-results/" + apiId;
+            String url = obaPortalProperties.getObaBaseUrl() + "/api-registrations";
             HttpGet httpGet = new HttpGet(url);
             return tokenProviderService.addOrganizationToken(httpGet, organizationId);
         };
 
-        return new RequestExecutor.Builder<>(requestBuilder, httpClient, ApiRegistrationStepsResponse.class)
+        return new RequestExecutor.Builder<>(requestBuilder, httpClient, ApiRegistrationList.class)
                 .addResponseValidator(new ResponseNotEmptyValidator())
                 .addResponseValidator(new ExpectedHttpCodesValidator(200))
                 .logRequestResponsesOnError(obaPortalProperties.isLogRequestsAndResponsesOnError())
                 .build()
                 .execute(organizationId);
+    }
+
+    public ApiRegistrationSteps findApiRegistrationSteps(ByOrganizationAndApi byOrganizationAndApi) {
+        RequestBuilder<ByOrganizationAndApi> resultsRequestBuilder = (input) -> {
+            String url = obaPortalProperties.getObaBaseUrl() + "/api-registration-step-results/" +
+                    byOrganizationAndApi.getApiId().toString();
+            HttpGet httpGet = new HttpGet(url);
+            return tokenProviderService.addOrganizationToken(httpGet, input.getOrganizationId());
+        };
+
+        ApiRegistrationStepResultsList stepResults =
+                new RequestExecutor.Builder<>(resultsRequestBuilder, httpClient, ApiRegistrationStepResultsList.class)
+                        .addResponseValidator(new ResponseNotEmptyValidator())
+                        .addResponseValidator(new ExpectedHttpCodesValidator(200))
+                        .logRequestResponsesOnError(obaPortalProperties.isLogRequestsAndResponsesOnError())
+                        .build()
+                        .execute(byOrganizationAndApi);
+
+        RequestBuilder<ByOrganizationAndApi> definitionsRequestBuilder = (input) -> {
+            String url = obaPortalProperties.getObaBaseUrl() + "/api-registration-step-definitions/" +
+                    byOrganizationAndApi.getApiId().toString();
+            HttpGet httpGet = new HttpGet(url);
+            return tokenProviderService.addOrganizationToken(httpGet, input.getOrganizationId());
+        };
+
+        ApiRegistrationStepDefinitionList stepDefinitions =
+                new RequestExecutor.Builder<>(definitionsRequestBuilder, httpClient, ApiRegistrationStepDefinitionList.class)
+                        .addResponseValidator(new ResponseNotEmptyValidator())
+                        .addResponseValidator(new ExpectedHttpCodesValidator(200))
+                        .logRequestResponsesOnError(obaPortalProperties.isLogRequestsAndResponsesOnError())
+                        .build()
+                        .execute(byOrganizationAndApi);
+
+        return new ApiRegistrationSteps(stepResults, stepDefinitions);
     }
 }

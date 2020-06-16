@@ -13,8 +13,12 @@ public class OrganizationCertificate {
     String name;
     String description;
     KeyPurpose keyPurpose;
+    String csrDistinguishedName;
+    String csr;
     String certificateDistinguishedName;
     String signedCertificate;
+    OffsetDateTime validFrom;
+    OffsetDateTime validUntil;
+    int daysUntilExpiration;
     OffsetDateTime created;
-
 }

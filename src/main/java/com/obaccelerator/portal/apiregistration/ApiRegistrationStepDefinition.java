@@ -1,17 +1,20 @@
 package com.obaccelerator.portal.apiregistration;
 
-import com.obaccelerator.common.form.FormDefinition;
-import lombok.Value;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.obaccelerator.portal.apiregistration.form.FormDefinition;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
-import java.util.UUID;
 
-
-@Value
+@Getter
+@Setter
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ApiRegistrationStepDefinition {
-    int stepNr;
-    UUID apiId;
-    List<OrganizationCertificate> signingCertificates;
-    List<OrganizationCertificate> transportCertificates;
-    FormDefinition formDefinition;
+
+    public Integer stepNr;
+    public String apiId;
+    public List<OrganizationCertificate> signingCertificates = null;
+    public List<OrganizationCertificate> transportCertificates = null;
+    public FormDefinition formDefinition;
 }
