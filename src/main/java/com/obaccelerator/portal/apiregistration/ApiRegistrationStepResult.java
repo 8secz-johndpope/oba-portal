@@ -8,6 +8,7 @@ import java.util.UUID;
 @Value
 public class ApiRegistrationStepResult {
     UUID id;
+    int stepNr;
     UUID apiId;
     UUID signingCertificateId;
     UUID transportCertificateId;

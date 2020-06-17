@@ -8,4 +8,5 @@ import java.util.List;
 public class ApiRegistrationSteps {
     List<ApiRegistrationStepResult> stepResults;
     List<ApiRegistrationStepDefinition> stepDefinitions;
+    ApiRegistrationStepDefinition currentStep;
 }

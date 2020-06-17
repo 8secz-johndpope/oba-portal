@@ -10,7 +10,9 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -89,6 +91,13 @@ public class ApiRegistrationGatewayService {
                         .build()
                         .execute(byOrganizationAndApi);
 
-        return new ApiRegistrationSteps(stepResults, stepDefinitions);
+        Optional<ApiRegistrationStepDefinition> nextStepOptional = stepDefinitions.stream()
+                .filter(def -> stepResults.stream()
+                        .noneMatch(res -> res.getStepNr() == def.getStepNr()))
+                .min(Comparator.comparingInt(ApiRegistrationStepDefinition::getStepNr));
+
+
+        return new ApiRegistrationSteps(stepResults, stepDefinitions,
+                nextStepOptional.orElse(null));
     }
 }
