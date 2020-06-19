@@ -2,10 +2,9 @@ package com.obaccelerator.portal.apiregistration;
 
 import com.obaccelerator.portal.portaluser.PortalUser;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.UUID;
 
@@ -34,5 +33,13 @@ public class ApiRegistrationController {
     public ApiRegistrationSteps findApiRegistrationStepResults(PortalUser portalUser, @PathVariable("apiId") UUID apiId) {
         return apiRegistrationGatewayService
                 .findApiRegistrationSteps(new ByOrganizationAndApi(portalUser.getOrganizationId(), apiId));
+    }
+
+    @PostMapping("/api-registration-steps/{apiId}")
+    public ApiRegistrationSteps submitStep(PortalUser portalUser,
+                                           @PathVariable("apiId") UUID apiId,
+                                           @RequestBody @Valid SubmittedForm submittedForm) {
+       String test = "";
+       return null;
     }
 }
