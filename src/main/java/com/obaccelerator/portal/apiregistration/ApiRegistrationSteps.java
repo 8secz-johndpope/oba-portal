@@ -6,7 +6,7 @@ import java.util.List;
 
 @Value
 public class ApiRegistrationSteps {
-    List<ApiRegistrationStepResult> stepResults;
+    List<ApiRegistrationStep> stepResults;
     List<ApiRegistrationStepDefinition> stepDefinitions;
     ApiRegistrationStepDefinition currentStep;
 }

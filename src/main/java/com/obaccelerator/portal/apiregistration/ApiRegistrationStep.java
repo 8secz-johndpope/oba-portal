@@ -6,12 +6,11 @@ import java.time.OffsetDateTime;
 import java.util.UUID;
 
 @Value
-public class ApiRegistrationStepResult {
+public class ApiRegistrationStep {
     UUID id;
     int stepNr;
     UUID apiId;
     UUID signingCertificateId;
     UUID transportCertificateId;
-    boolean success;
     OffsetDateTime created;
 }

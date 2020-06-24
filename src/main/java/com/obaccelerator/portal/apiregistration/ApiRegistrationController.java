@@ -1,5 +1,6 @@
 package com.obaccelerator.portal.apiregistration;
 
+import com.obaccelerator.common.form.SubmittedForm;
 import com.obaccelerator.portal.portaluser.PortalUser;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -36,10 +37,9 @@ public class ApiRegistrationController {
     }
 
     @PostMapping("/api-registration-steps/{apiId}")
-    public ApiRegistrationSteps submitStep(PortalUser portalUser,
-                                           @PathVariable("apiId") UUID apiId,
-                                           @RequestBody @Valid SubmittedForm submittedForm) {
-       String test = "";
-       return null;
+    public ApiRegistrationStep submitStep(PortalUser portalUser,
+                                          @PathVariable("apiId") UUID apiId,
+                                          @RequestBody @Valid SubmittedForm submittedForm) {
+        return apiRegistrationGatewayService.submitRegistrationStep(portalUser.getOrganizationId(), apiId, submittedForm);
     }
 }

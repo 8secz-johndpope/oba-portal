@@ -18,10 +18,11 @@ public class FieldDefinition {
     protected String key;
     protected LabelExplanation labelExplanation;
     private String buttonText;
-    private List<CheckBoxValue> values;
+    private List<CheckBoxValue> checkBoxValues;
+    private CheckBoxesMinSelectedValidator checkBoxesMinSelectedValidator;
     private boolean required;
     private String description;
-    private String value;
+    private List<String> values;
     private List<LabelValue> options;
     private String regex;
     private Integer minLength;

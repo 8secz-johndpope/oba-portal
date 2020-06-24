@@ -2,5 +2,5 @@ package com.obaccelerator.portal.apiregistration;
 
 import java.util.ArrayList;
 
-public class ApiRegistrationStepResultsList extends ArrayList<ApiRegistrationStepResult> {
+public class ApiRegistrationStepResultsList extends ArrayList<ApiRegistrationStep> {
 }

@@ -1,13 +1,12 @@
 package com.obaccelerator.portal.apiregistration;
 
-import com.obaccelerator.common.http.ExpectedHttpCodesValidator;
-import com.obaccelerator.common.http.RequestBuilder;
-import com.obaccelerator.common.http.RequestExecutor;
-import com.obaccelerator.common.http.ResponseNotEmptyValidator;
+import com.obaccelerator.common.form.SubmittedForm;
+import com.obaccelerator.common.http.*;
 import com.obaccelerator.portal.config.ObaPortalProperties;
 import com.obaccelerator.portal.token.TokenProviderService;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
@@ -62,7 +61,7 @@ public class ApiRegistrationGatewayService {
 
     public ApiRegistrationSteps findApiRegistrationSteps(ByOrganizationAndApi byOrganizationAndApi) {
         RequestBuilder<ByOrganizationAndApi> resultsRequestBuilder = (input) -> {
-            String url = obaPortalProperties.getObaBaseUrl() + "/api-registration-step-results/" +
+            String url = obaPortalProperties.getObaBaseUrl() + "/api-registration-steps/" +
                     byOrganizationAndApi.getApiId().toString();
             HttpGet httpGet = new HttpGet(url);
             return tokenProviderService.addOrganizationToken(httpGet, input.getOrganizationId());
@@ -99,5 +98,21 @@ public class ApiRegistrationGatewayService {
 
         return new ApiRegistrationSteps(stepResults, stepDefinitions,
                 nextStepOptional.orElse(null));
+    }
+
+    public ApiRegistrationStep submitRegistrationStep(UUID organizationId, UUID apiId, SubmittedForm submittedForm) {
+        RequestBuilder<SubmittedForm> requestBuilder = (input) -> {
+            String url = obaPortalProperties.getObaBaseUrl() + "/api-registration-steps/" + apiId.toString();
+            HttpPost httpPost = new HttpPost(url);
+            httpPost.setEntity(new JsonHttpEntity<>(submittedForm));
+            return tokenProviderService.addOrganizationToken(httpPost, organizationId);
+        };
+
+        return new RequestExecutor.Builder<>(requestBuilder, httpClient, ApiRegistrationStep.class)
+                .addResponseValidator(new ResponseNotEmptyValidator())
+                .addResponseValidator(new ExpectedHttpCodesValidator(200))
+                .logRequestResponsesOnError(obaPortalProperties.isLogRequestsAndResponsesOnError())
+                .build()
+                .execute(submittedForm);
     }
 }
