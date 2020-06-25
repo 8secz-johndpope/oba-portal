@@ -1,12 +1,15 @@
 package com.obaccelerator.portal.bank;
 
-import lombok.Value;
+import com.obaccelerator.portal.api.Api;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 
-@Value
+@Getter
+@Setter
 public class Bank {
-    String bankSystemName;
+    String systemName;
     String displayName;
     String implementationKey;
     boolean beta;

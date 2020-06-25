@@ -19,16 +19,16 @@ public class ApiRegistrationController {
         this.apiRegistrationGatewayService = apiRegistrationGatewayService;
     }
 
-    @GetMapping("/api-registrations/{apiId}")
+    @GetMapping("/api-registrations")
     public List<ApiRegistration> findApiRegistrationsForApi(PortalUser portalUser,
-                                                            @PathVariable("apiId") UUID apiId) {
+                                                            @RequestParam("apiId") UUID apiId) {
         return apiRegistrationGatewayService.findApiRegistrations(new ByOrganizationAndApi(portalUser.getOrganizationId(), apiId));
     }
 
-    @GetMapping("/api-registrations")
+/*    @GetMapping("/api-registrations")
     public List<ApiRegistration> findApiRegistrationsForOrganization(PortalUser portalUser) {
         return apiRegistrationGatewayService.findRegistrationsForOrganization(portalUser.getOrganizationId());
-    }
+    }*/
 
     @GetMapping("/api-registration-steps/{apiId}")
     public ApiRegistrationSteps findApiRegistrationStepResults(PortalUser portalUser, @PathVariable("apiId") UUID apiId) {

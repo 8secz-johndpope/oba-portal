@@ -31,7 +31,7 @@ public class ApiRegistrationGatewayService {
 
     public List<ApiRegistration> findApiRegistrations(ByOrganizationAndApi byOrganizationAndApi) {
         RequestBuilder<ByOrganizationAndApi> requestBuilder = (input) -> {
-            String url = obaPortalProperties.getObaBaseUrl() + "/api-registrations/" + input.getApiId();
+            String url = obaPortalProperties.getObaBaseUrl() + "/api-registrations?apiId=" + input.getApiId();
             HttpGet httpGet = new HttpGet(url);
             return tokenProviderService.addOrganizationToken(httpGet, byOrganizationAndApi.getOrganizationId());
         };
