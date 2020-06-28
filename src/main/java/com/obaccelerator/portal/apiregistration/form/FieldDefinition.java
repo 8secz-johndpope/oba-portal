@@ -23,9 +23,10 @@ public class FieldDefinition {
     private boolean required;
     private String description;
     private List<String> values;
-    private List<LabelValue> options;
+    private List<SelectOption> options;
     private String regex;
     private Integer minLength;
     private Integer maxLength;
     private FieldType type;
+    private boolean secret;
 }

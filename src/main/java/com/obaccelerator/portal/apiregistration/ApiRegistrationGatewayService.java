@@ -1,7 +1,9 @@
 package com.obaccelerator.portal.apiregistration;
 
+import com.obaccelerator.common.error.EntityNotFoundException;
 import com.obaccelerator.common.form.SubmittedForm;
 import com.obaccelerator.common.http.*;
+import com.obaccelerator.common.model.organization.OrganizationId;
 import com.obaccelerator.portal.config.ObaPortalProperties;
 import com.obaccelerator.portal.token.TokenProviderService;
 import org.apache.http.client.HttpClient;
@@ -59,6 +61,12 @@ public class ApiRegistrationGatewayService {
                 .execute(organizationId);
     }
 
+    public ApiRegistration findRegistrationForOrganization(UUID organizationId, UUID registrationId) {
+        return findRegistrationsForOrganization(organizationId).stream().filter(r -> r.getId().equals(registrationId))
+                .findAny()
+                .orElseThrow(() -> new EntityNotFoundException(ApiRegistration.class, registrationId));
+    }
+
     public ApiRegistrationSteps findApiRegistrationSteps(ByOrganizationAndApi byOrganizationAndApi) {
         RequestBuilder<ByOrganizationAndApi> resultsRequestBuilder = (input) -> {
             String url = obaPortalProperties.getObaBaseUrl() + "/api-registration-steps/" +
@@ -114,5 +122,20 @@ public class ApiRegistrationGatewayService {
                 .logRequestResponsesOnError(obaPortalProperties.isLogRequestsAndResponsesOnError())
                 .build()
                 .execute(submittedForm);
+    }
+
+    public ApiRegistrationStepDefinition getUpdateRegistrationStepDefinition(UUID organizationId, UUID apiIRegistrationId) {
+        RequestBuilder<UUID> requestBuilder = (input) -> {
+            String url = obaPortalProperties.getObaBaseUrl() + "/api-registration-update-step-definition/" + apiIRegistrationId.toString();
+            HttpGet httpGet = new HttpGet(url);
+            return tokenProviderService.addOrganizationToken(httpGet, organizationId);
+        };
+
+        return new RequestExecutor.Builder<>(requestBuilder, httpClient, ApiRegistrationStepDefinition.class)
+                .addResponseValidator(new ResponseNotEmptyValidator())
+                .addResponseValidator(new ExpectedHttpCodesValidator(200))
+                .logRequestResponsesOnError(obaPortalProperties.isLogRequestsAndResponsesOnError())
+                .build()
+                .execute(organizationId);
     }
 }
