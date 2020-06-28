@@ -49,7 +49,16 @@ public class ApiRegistrationController {
     @GetMapping("/api-registration-update-step/{apiIRegistrationId}")
     public ApiRegistrationStepDefinition getUpdateRegistrationStep(PortalUser portalUser,
                                                                    @PathVariable(value = "apiIRegistrationId") UUID apiIRegistrationId) {
-        return apiRegistrationGatewayService.getUpdateRegistrationStepDefinition(portalUser.getOrganizationId(), apiIRegistrationId);
+        return apiRegistrationGatewayService
+                .getUpdateRegistrationStepDefinition(portalUser.getOrganizationId(), apiIRegistrationId);
+    }
+
+    @PostMapping("/api-registration-update-step/{apiIRegistrationId}")
+    public ApiRegistrationStep putUpdateRegistrationStep(PortalUser portalUser,
+                                                                   @PathVariable(value = "apiIRegistrationId") UUID apiIRegistrationId,
+                                                                   @RequestBody @Valid SubmittedForm submittedForm) {
+        return apiRegistrationGatewayService
+                .submitUpdateRegistrationStep(portalUser.getOrganizationId(), apiIRegistrationId, submittedForm);
     }
 
 }

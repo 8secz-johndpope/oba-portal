@@ -9,6 +9,7 @@ import com.obaccelerator.portal.token.TokenProviderService;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
@@ -111,6 +112,22 @@ public class ApiRegistrationGatewayService {
     public ApiRegistrationStep submitRegistrationStep(UUID organizationId, UUID apiId, SubmittedForm submittedForm) {
         RequestBuilder<SubmittedForm> requestBuilder = (input) -> {
             String url = obaPortalProperties.getObaBaseUrl() + "/api-registration-steps/" + apiId.toString();
+            HttpPost httpPost = new HttpPost(url);
+            httpPost.setEntity(new JsonHttpEntity<>(submittedForm));
+            return tokenProviderService.addOrganizationToken(httpPost, organizationId);
+        };
+
+        return new RequestExecutor.Builder<>(requestBuilder, httpClient, ApiRegistrationStep.class)
+                .addResponseValidator(new ResponseNotEmptyValidator())
+                .addResponseValidator(new ExpectedHttpCodesValidator(200))
+                .logRequestResponsesOnError(obaPortalProperties.isLogRequestsAndResponsesOnError())
+                .build()
+                .execute(submittedForm);
+    }
+
+    public ApiRegistrationStep submitUpdateRegistrationStep(UUID organizationId, UUID apiRegistrationId, SubmittedForm submittedForm) {
+        RequestBuilder<SubmittedForm> requestBuilder = (input) -> {
+            String url = obaPortalProperties.getObaBaseUrl() + "/api-registration-update-step-definition/" + apiRegistrationId.toString();
             HttpPost httpPost = new HttpPost(url);
             httpPost.setEntity(new JsonHttpEntity<>(submittedForm));
             return tokenProviderService.addOrganizationToken(httpPost, organizationId);
