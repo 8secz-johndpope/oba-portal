@@ -125,7 +125,7 @@ public class ApiRegistrationGatewayService {
                 .execute(submittedForm);
     }
 
-    public ApiRegistrationStep submitUpdateRegistrationStep(UUID organizationId, UUID apiRegistrationId, SubmittedForm submittedForm) {
+    public ApiRegistration submitUpdateRegistrationStep(UUID organizationId, UUID apiRegistrationId, SubmittedForm submittedForm) {
         RequestBuilder<SubmittedForm> requestBuilder = (input) -> {
             String url = obaPortalProperties.getObaBaseUrl() + "/api-registration-update-step-definition/" + apiRegistrationId.toString();
             HttpPost httpPost = new HttpPost(url);
@@ -133,7 +133,7 @@ public class ApiRegistrationGatewayService {
             return tokenProviderService.addOrganizationToken(httpPost, organizationId);
         };
 
-        return new RequestExecutor.Builder<>(requestBuilder, httpClient, ApiRegistrationStep.class)
+        return new RequestExecutor.Builder<>(requestBuilder, httpClient, ApiRegistration.class)
                 .addResponseValidator(new ResponseNotEmptyValidator())
                 .addResponseValidator(new ExpectedHttpCodesValidator(200))
                 .logRequestResponsesOnError(obaPortalProperties.isLogRequestsAndResponsesOnError())

@@ -54,7 +54,7 @@ public class ApiRegistrationController {
     }
 
     @PostMapping("/api-registration-update-step/{apiIRegistrationId}")
-    public ApiRegistrationStep putUpdateRegistrationStep(PortalUser portalUser,
+    public ApiRegistration putUpdateRegistrationStep(PortalUser portalUser,
                                                                    @PathVariable(value = "apiIRegistrationId") UUID apiIRegistrationId,
                                                                    @RequestBody @Valid SubmittedForm submittedForm) {
         return apiRegistrationGatewayService
