@@ -51,6 +51,9 @@ public class SessionController {
      */
     @GetMapping("/sessions")
     public Session getActiveSession(@CookieValue(value = "oba_portal_session", required = false) String portalSessionId) {
+        if(portalSessionId == null) {
+            throw new NoSessionException();
+        }
         return sessionService.findActiveSession(portalSessionId).orElseThrow(NoSessionException::new);
     }
 

@@ -24,8 +24,8 @@ public class BankController {
 
     @PreAuthorize("hasAnyRole('ROLE_ORGANIZATION', 'ROLE_APPLICATION')")
     @GetMapping("/banks/{bankSystemName}")
-    public Bank bank(PortalUser portalUser,
-                     @PathVariable("bankSystemName") String bankSystemName) {
+    public FinancialOrganization bank(PortalUser portalUser,
+                                      @PathVariable("bankSystemName") String bankSystemName) {
         return bankObaGatewayService.findBank(portalUser.getOrganizationId(), bankSystemName);
     }
 }

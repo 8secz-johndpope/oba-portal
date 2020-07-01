@@ -40,14 +40,14 @@ public class BankObaGatewayService {
                 .execute(organizationId);
     }
 
-    public Bank findBank(UUID organizationId, String bankSystemName) {
+    public FinancialOrganization findBank(UUID organizationId, String bankSystemName) {
         RequestBuilder<UUID> requestBuilder = (input) -> {
             String url = obaPortalProperties.getObaBaseUrl() + "/banks/" + bankSystemName;
             HttpGet httpGet = new HttpGet(url);
             return tokenProviderService.addOrganizationToken(httpGet, organizationId);
         };
 
-        return new RequestExecutor.Builder<>(requestBuilder, obaHttpClient, Bank.class)
+        return new RequestExecutor.Builder<>(requestBuilder, obaHttpClient, FinancialOrganization.class)
                 .addResponseValidator(new ResponseNotEmptyValidator())
                 .addResponseValidator(new ExpectedHttpCodesValidator(200))
                 .logRequestResponsesOnError(obaPortalProperties.isLogRequestsAndResponsesOnError())

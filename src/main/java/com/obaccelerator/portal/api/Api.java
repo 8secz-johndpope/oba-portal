@@ -1,6 +1,6 @@
 package com.obaccelerator.portal.api;
 
-import com.obaccelerator.portal.bank.Bank;
+import com.obaccelerator.portal.bank.FinancialOrganization;
 import com.obaccelerator.portal.bank.MainService;
 import lombok.Getter;
 import lombok.Setter;
@@ -21,6 +21,6 @@ public class Api {
     boolean sandbox;
     boolean beta;
     List<MainService> mainServices;
-    Bank bank;
+    FinancialOrganization financialOrganization;
 }
 

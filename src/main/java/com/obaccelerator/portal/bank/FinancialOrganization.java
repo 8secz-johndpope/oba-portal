@@ -8,7 +8,7 @@ import java.util.List;
 
 @Getter
 @Setter
-public class Bank {
+public class FinancialOrganization {
     String systemName;
     String displayName;
     String implementationKey;
