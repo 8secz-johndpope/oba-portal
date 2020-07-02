@@ -6,6 +6,7 @@ import com.obaccelerator.portal.apiregistration.ByOrganizationAndApi;
 import com.obaccelerator.portal.config.ObaPortalProperties;
 import com.obaccelerator.portal.token.TokenProviderService;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.springframework.stereotype.Service;
@@ -57,6 +58,21 @@ public class ApplicationGatewayService {
                 .logRequestResponsesOnError(obaPortalProperties.isLogRequestsAndResponsesOnError())
                 .build()
                 .execute(request);
+    }
+
+    public void deleteApplication(UUID organizationId, UUID applicationId) {
+        RequestBuilder<UUID> requestBuilder = (input) -> {
+            String url = obaPortalProperties.getObaBaseUrl() + "/applications/" + applicationId.toString();
+            HttpDelete httpDelete = new HttpDelete(url);
+            return tokenProviderService.addOrganizationToken(httpDelete, organizationId);
+        };
+
+        new RequestExecutor.Builder<>(requestBuilder, httpClient, Void.class)
+                .addResponseValidator(new ResponseNotEmptyValidator())
+                .addResponseValidator(new ExpectedHttpCodesValidator(200))
+                .logRequestResponsesOnError(obaPortalProperties.isLogRequestsAndResponsesOnError())
+                .build()
+                .execute(applicationId);
     }
 
     public List<ApplicationPublicKey> findApplicationPublicKeys(UUID organizationId, UUID applicationId) {

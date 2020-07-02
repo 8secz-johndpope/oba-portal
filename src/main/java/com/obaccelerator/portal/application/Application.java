@@ -13,5 +13,6 @@ public class Application {
     int numberOfAutomatedRefreshesPerDay;
     String technicalContactName;
     String technicalContactEmail;
+    Boolean hasConnections;
     OffsetDateTime created;
 }

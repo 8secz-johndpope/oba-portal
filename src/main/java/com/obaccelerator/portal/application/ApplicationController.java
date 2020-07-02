@@ -25,8 +25,13 @@ public class ApplicationController {
 
     @PostMapping("/applications")
     public Application createApplication(PortalUser portalUser,
-                                               @RequestBody CreateApplicationRequest createApplicationRequest) {
+                                         @RequestBody CreateApplicationRequest createApplicationRequest) {
         return applicationGatewayService.createApplication(portalUser.getOrganizationId(), createApplicationRequest);
+    }
+
+    @DeleteMapping("/applications/{applicationId}")
+    public void deleteApplication(PortalUser portalUser, @PathVariable UUID applicationId) {
+        applicationGatewayService.deleteApplication(portalUser.getOrganizationId(), applicationId);
     }
 
     @GetMapping("/applications/{applicationId}/public-keys")
