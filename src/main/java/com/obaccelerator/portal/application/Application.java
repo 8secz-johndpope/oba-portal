@@ -1,4 +1,4 @@
-package com.obaccelerator.portal.applications;
+package com.obaccelerator.portal.application;
 
 import lombok.Value;
 
@@ -8,8 +8,9 @@ import java.util.UUID;
 @Value
 public class Application {
     UUID id;
+    UUID organizationId;
     String name;
-    int nrOfAutomatedRefreshesPerDay;
+    int numberOfAutomatedRefreshesPerDay;
     String technicalContactName;
     String technicalContactEmail;
     OffsetDateTime created;

@@ -1,15 +1,12 @@
 package com.obaccelerator.portal.apiregistration;
 
-import com.obaccelerator.common.VerifiedOrgId;
 import com.obaccelerator.common.form.SubmittedForm;
-import com.obaccelerator.common.model.organization.OrganizationId;
 import com.obaccelerator.portal.portaluser.PortalUser;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @PreAuthorize("hasRole('ROLE_ORGANIZATION')")
