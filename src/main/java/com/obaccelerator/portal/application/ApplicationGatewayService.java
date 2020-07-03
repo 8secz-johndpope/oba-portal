@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class ApplicationGatewayService {
@@ -42,6 +43,21 @@ public class ApplicationGatewayService {
                 .logRequestResponsesOnError(obaPortalProperties.isLogRequestsAndResponsesOnError())
                 .build()
                 .execute(organizationId);
+    }
+
+    public Application findApplication(UUID organizationId, UUID applicationId) {
+        RequestBuilder<UUID> requestBuilder = (input) -> {
+            String url = obaPortalProperties.getObaBaseUrl() + "/applications/" + applicationId.toString();
+            HttpGet httpGet = new HttpGet(url);
+            return tokenProviderService.addOrganizationToken(httpGet, organizationId);
+        };
+
+        return new RequestExecutor.Builder<>(requestBuilder, httpClient, Application.class)
+                .addResponseValidator(new ResponseNotEmptyValidator())
+                .addResponseValidator(new ExpectedHttpCodesValidator(200))
+                .logRequestResponsesOnError(obaPortalProperties.isLogRequestsAndResponsesOnError())
+                .build()
+                .execute(applicationId);
     }
 
     public Application createApplication(UUID organizationId, CreateApplicationRequest request) {

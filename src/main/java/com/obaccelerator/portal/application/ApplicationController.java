@@ -29,6 +29,11 @@ public class ApplicationController {
         return applicationGatewayService.createApplication(portalUser.getOrganizationId(), createApplicationRequest);
     }
 
+    @GetMapping("/applications/{applicationId}")
+    public Application findApplication(PortalUser portalUser,@PathVariable UUID applicationId) {
+        return applicationGatewayService.findApplication(portalUser.getOrganizationId(), applicationId);
+    }
+
     @DeleteMapping("/applications/{applicationId}")
     public void deleteApplication(PortalUser portalUser, @PathVariable UUID applicationId) {
         applicationGatewayService.deleteApplication(portalUser.getOrganizationId(), applicationId);
