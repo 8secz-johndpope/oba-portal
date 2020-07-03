@@ -121,4 +121,19 @@ public class ApplicationGatewayService {
                 .build()
                 .execute(request);
     }
+
+    public void deleteApplicationPublicKey(UUID organizationId, UUID applicationId, UUID publicKeyId) {
+        RequestBuilder<UUID> requestBuilder = (input) -> {
+            String url = obaPortalProperties.getObaBaseUrl() + "/applications/" + applicationId.toString() + "/public-keys/" + publicKeyId.toString();
+            HttpDelete httpDelete = new HttpDelete(url);
+            return tokenProviderService.addOrganizationToken(httpDelete, organizationId);
+        };
+
+        new RequestExecutor.Builder<>(requestBuilder, httpClient, Void.class)
+                .addResponseValidator(new ResponseNotEmptyValidator())
+                .addResponseValidator(new ExpectedHttpCodesValidator(200))
+                .logRequestResponsesOnError(obaPortalProperties.isLogRequestsAndResponsesOnError())
+                .build()
+                .execute(publicKeyId);
+    }
 }

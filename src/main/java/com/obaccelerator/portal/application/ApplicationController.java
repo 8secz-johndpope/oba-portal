@@ -1,5 +1,6 @@
 package com.obaccelerator.portal.application;
 
+import com.obaccelerator.common.token.KeyUtil;
 import com.obaccelerator.portal.portaluser.PortalUser;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -30,7 +31,7 @@ public class ApplicationController {
     }
 
     @GetMapping("/applications/{applicationId}")
-    public Application findApplication(PortalUser portalUser,@PathVariable UUID applicationId) {
+    public Application findApplication(PortalUser portalUser, @PathVariable UUID applicationId) {
         return applicationGatewayService.findApplication(portalUser.getOrganizationId(), applicationId);
     }
 
@@ -49,7 +50,15 @@ public class ApplicationController {
     public ApplicationPublicKey createApplicationPublicKey(PortalUser portalUser,
                                                            @PathVariable UUID applicationId,
                                                            @RequestBody @Valid CreateApplicationPublicKeyRequest request) {
+        KeyUtil.stringToRsaPublicKey(request.getPublicKey());
         return applicationGatewayService.createApplicationPublicKey(portalUser.getOrganizationId(), applicationId, request);
+    }
+
+    @DeleteMapping("/applications/{applicationId}/public-keys/{publicKeyId}")
+    public void deleteApplicationPublicKey(PortalUser portalUser,
+                                                           @PathVariable UUID applicationId,
+                                                           @PathVariable UUID publicKeyId) {
+        applicationGatewayService.deleteApplicationPublicKey(portalUser.getOrganizationId(), applicationId, publicKeyId);
     }
 
 }
