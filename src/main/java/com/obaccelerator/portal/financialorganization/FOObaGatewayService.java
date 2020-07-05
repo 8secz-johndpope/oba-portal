@@ -1,4 +1,4 @@
-package com.obaccelerator.portal.bank;
+package com.obaccelerator.portal.financialorganization;
 
 import com.obaccelerator.common.http.ExpectedHttpCodesValidator;
 import com.obaccelerator.common.http.RequestBuilder;
@@ -13,26 +13,26 @@ import org.springframework.stereotype.Service;
 import java.util.UUID;
 
 @Service
-public class BankObaGatewayService {
+public class FOObaGatewayService {
 
     private final HttpClient obaHttpClient;
     private final ObaPortalProperties obaPortalProperties;
     private final TokenProviderService tokenProviderService;
 
-    public BankObaGatewayService(HttpClient obaHttpClient, ObaPortalProperties obaPortalProperties, TokenProviderService tokenProviderService) {
+    public FOObaGatewayService(HttpClient obaHttpClient, ObaPortalProperties obaPortalProperties, TokenProviderService tokenProviderService) {
         this.obaHttpClient = obaHttpClient;
         this.obaPortalProperties = obaPortalProperties;
         this.tokenProviderService = tokenProviderService;
     }
 
-    public BankListResponse findBanks(UUID organizationId) {
+    public FOListResponse findBanks(UUID organizationId) {
         RequestBuilder<UUID> requestBuilder = (input) -> {
             String url = obaPortalProperties.getObaBaseUrl() + "/banks/";
             HttpGet httpGet = new HttpGet(url);
             return tokenProviderService.addOrganizationToken(httpGet, organizationId);
         };
 
-        return new RequestExecutor.Builder<>(requestBuilder, obaHttpClient, BankListResponse.class)
+        return new RequestExecutor.Builder<>(requestBuilder, obaHttpClient, FOListResponse.class)
                 .addResponseValidator(new ResponseNotEmptyValidator())
                 .addResponseValidator(new ExpectedHttpCodesValidator(200))
                 .logRequestResponsesOnError(obaPortalProperties.isLogRequestsAndResponsesOnError())

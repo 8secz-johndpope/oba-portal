@@ -1,4 +1,4 @@
-package com.obaccelerator.portal.bank;
+package com.obaccelerator.portal.financialorganization;
 
 import com.obaccelerator.portal.portaluser.PortalUser;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -8,24 +8,24 @@ import org.springframework.web.bind.annotation.RestController;
 
 
 @RestController
-public class BankController {
+public class FOController {
 
-    private final BankObaGatewayService bankObaGatewayService;
+    private final FOObaGatewayService FOObaGatewayService;
 
-    public BankController(BankObaGatewayService bankObaGatewayService) {
-        this.bankObaGatewayService = bankObaGatewayService;
+    public FOController(FOObaGatewayService FOObaGatewayService) {
+        this.FOObaGatewayService = FOObaGatewayService;
     }
 
     @PreAuthorize("hasAnyRole('ROLE_ORGANIZATION', 'ROLE_APPLICATION')")
     @GetMapping("/banks")
-    public BankListResponse banksList(PortalUser portalUser) {
-        return bankObaGatewayService.findBanks(portalUser.getOrganizationId());
+    public FOListResponse banksList(PortalUser portalUser) {
+        return FOObaGatewayService.findBanks(portalUser.getOrganizationId());
     }
 
     @PreAuthorize("hasAnyRole('ROLE_ORGANIZATION', 'ROLE_APPLICATION')")
     @GetMapping("/banks/{bankSystemName}")
     public FinancialOrganization bank(PortalUser portalUser,
                                       @PathVariable("bankSystemName") String bankSystemName) {
-        return bankObaGatewayService.findBank(portalUser.getOrganizationId(), bankSystemName);
+        return FOObaGatewayService.findBank(portalUser.getOrganizationId(), bankSystemName);
     }
 }

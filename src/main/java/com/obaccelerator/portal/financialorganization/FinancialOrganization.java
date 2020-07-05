@@ -1,4 +1,4 @@
-package com.obaccelerator.portal.bank;
+package com.obaccelerator.portal.financialorganization;
 
 import com.obaccelerator.portal.api.Api;
 import lombok.Getter;

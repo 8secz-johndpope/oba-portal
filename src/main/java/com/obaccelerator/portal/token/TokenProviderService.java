@@ -1,5 +1,6 @@
 package com.obaccelerator.portal.token;
 
+import com.obaccelerator.common.token.ApiToken;
 import com.obaccelerator.common.token.TokenGenerator;
 import com.obaccelerator.portal.config.ObaPortalProperties;
 import org.apache.http.client.methods.HttpRequestBase;
@@ -30,16 +31,16 @@ public class TokenProviderService {
                 "oba-admin-token-signing");
     }
 
-    private String getOrganizationToken(UUID organizationId) {
+    private ApiToken getOrganizationToken(UUID organizationId) {
         return organizationTokenGenerator.generateOrganizationToken(organizationId.toString());
     }
 
-    private String getObaAdminToken() {
+    private ApiToken getObaAdminToken() {
         return obaAdminTokenGenerator.generateToken(ADMIN);
     }
 
     public <T extends HttpRequestBase> T addOrganizationToken(T request, UUID organizationId) {
-        request.addHeader("Authorization", "Bearer " + getOrganizationToken(organizationId));
+        request.addHeader("Authorization", "Bearer " + getOrganizationToken(organizationId).getApiToken());
         return request;
     }
 }
