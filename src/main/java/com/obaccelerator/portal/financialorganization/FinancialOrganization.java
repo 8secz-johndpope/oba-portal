@@ -12,7 +12,6 @@ public class FinancialOrganization {
     String systemName;
     String displayName;
     String implementationKey;
-    boolean beta;
     List<BankGroup> groups;
     List<Api> apis;
 }

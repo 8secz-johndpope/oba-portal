@@ -10,22 +10,22 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class FOController {
 
-    private final FOObaGatewayService FOObaGatewayService;
+    private final FinancialOrganizationGatewayService FinancialOrganizationGatewayService;
 
-    public FOController(FOObaGatewayService FOObaGatewayService) {
-        this.FOObaGatewayService = FOObaGatewayService;
+    public FOController(FinancialOrganizationGatewayService FinancialOrganizationGatewayService) {
+        this.FinancialOrganizationGatewayService = FinancialOrganizationGatewayService;
     }
 
     @PreAuthorize("hasAnyRole('ROLE_ORGANIZATION', 'ROLE_APPLICATION')")
-    @GetMapping("/banks")
+    @GetMapping("/financial-organizations")
     public FOListResponse banksList(PortalUser portalUser) {
-        return FOObaGatewayService.findBanks(portalUser.getOrganizationId());
+        return FinancialOrganizationGatewayService.findFinancialOrganizations(portalUser.getOrganizationId());
     }
 
     @PreAuthorize("hasAnyRole('ROLE_ORGANIZATION', 'ROLE_APPLICATION')")
-    @GetMapping("/banks/{bankSystemName}")
+    @GetMapping("/financial-organizations/{bankSystemName}")
     public FinancialOrganization bank(PortalUser portalUser,
                                       @PathVariable("bankSystemName") String bankSystemName) {
-        return FOObaGatewayService.findBank(portalUser.getOrganizationId(), bankSystemName);
+        return FinancialOrganizationGatewayService.findFinancialOrganization(portalUser.getOrganizationId(), bankSystemName);
     }
 }

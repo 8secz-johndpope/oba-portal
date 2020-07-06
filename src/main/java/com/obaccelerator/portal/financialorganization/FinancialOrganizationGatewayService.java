@@ -13,21 +13,21 @@ import org.springframework.stereotype.Service;
 import java.util.UUID;
 
 @Service
-public class FOObaGatewayService {
+public class FinancialOrganizationGatewayService {
 
     private final HttpClient obaHttpClient;
     private final ObaPortalProperties obaPortalProperties;
     private final TokenProviderService tokenProviderService;
 
-    public FOObaGatewayService(HttpClient obaHttpClient, ObaPortalProperties obaPortalProperties, TokenProviderService tokenProviderService) {
+    public FinancialOrganizationGatewayService(HttpClient obaHttpClient, ObaPortalProperties obaPortalProperties, TokenProviderService tokenProviderService) {
         this.obaHttpClient = obaHttpClient;
         this.obaPortalProperties = obaPortalProperties;
         this.tokenProviderService = tokenProviderService;
     }
 
-    public FOListResponse findBanks(UUID organizationId) {
+    public FOListResponse findFinancialOrganizations(UUID organizationId) {
         RequestBuilder<UUID> requestBuilder = (input) -> {
-            String url = obaPortalProperties.getObaBaseUrl() + "/banks/";
+            String url = obaPortalProperties.getObaBaseUrl() + "/financial-organizations/";
             HttpGet httpGet = new HttpGet(url);
             return tokenProviderService.addOrganizationToken(httpGet, organizationId);
         };
@@ -40,9 +40,9 @@ public class FOObaGatewayService {
                 .execute(organizationId);
     }
 
-    public FinancialOrganization findBank(UUID organizationId, String bankSystemName) {
+    public FinancialOrganization findFinancialOrganization(UUID organizationId, String bankSystemName) {
         RequestBuilder<UUID> requestBuilder = (input) -> {
-            String url = obaPortalProperties.getObaBaseUrl() + "/banks/" + bankSystemName;
+            String url = obaPortalProperties.getObaBaseUrl() + "/financial-organizations/" + bankSystemName;
             HttpGet httpGet = new HttpGet(url);
             return tokenProviderService.addOrganizationToken(httpGet, organizationId);
         };
