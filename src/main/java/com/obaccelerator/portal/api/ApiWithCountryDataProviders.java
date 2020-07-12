@@ -2,6 +2,7 @@ package com.obaccelerator.portal.api;
 
 import com.obaccelerator.portal.apiregistration.ApiRegistration;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.ArrayList;
@@ -10,6 +11,7 @@ import java.util.UUID;
 
 @Getter
 @Setter
+@NoArgsConstructor
 public class ApiWithCountryDataProviders {
     UUID apiId;
     ApiType type;
@@ -20,4 +22,5 @@ public class ApiWithCountryDataProviders {
     List<ApiRegistration> apiRegistrations;
     List<CountryDataProvider> countryDataProviders;
     String title;
+
 }

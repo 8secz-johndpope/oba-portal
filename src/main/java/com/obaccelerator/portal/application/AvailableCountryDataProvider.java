@@ -9,5 +9,6 @@ import lombok.Setter;
 @NoArgsConstructor
 public class AvailableCountryDataProvider {
     CountryDataProvider countryDataProvider;
+    AvailableCountryDataProviderApi availableCountryDataProviderApi;
     boolean enabled;
 }
