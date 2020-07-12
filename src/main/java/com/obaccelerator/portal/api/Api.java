@@ -1,6 +1,5 @@
 package com.obaccelerator.portal.api;
 
-import com.obaccelerator.portal.financialorganization.FinancialOrganization;
 import com.obaccelerator.portal.financialorganization.MainService;
 import lombok.Getter;
 import lombok.Setter;
@@ -22,6 +21,5 @@ public class Api {
     boolean beta;
     GlobalApiStatus globalStatus;
     List<MainService> mainServices;
-    FinancialOrganization financialOrganization;
 }
 

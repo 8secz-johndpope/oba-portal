@@ -13,8 +13,6 @@ public class PublicKeyCollection {
 
     private List<CognitoKey> keys = new ArrayList<>();
 
-
-
     public CognitoKey getKey(String keyId) {
         for (CognitoKey key : keys) {
             if(key.getKid().equals(keyId)) {

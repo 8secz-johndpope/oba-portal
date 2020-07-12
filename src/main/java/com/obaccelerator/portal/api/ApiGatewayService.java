@@ -11,6 +11,9 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.UUID;
+
 @Service
 public class ApiGatewayService {
 
@@ -25,18 +28,33 @@ public class ApiGatewayService {
         this.httpClient = httpClient;
     }
 
-    public Api findApi(ByOrganizationAndApi byOrganizationAndApi) {
+    public ApiWithCountryDataProviders findOneApiWithRegistrations(ByOrganizationAndApi byOrganizationAndApi) {
         RequestBuilder<ByOrganizationAndApi> requestBuilder = (input) -> {
             String url = obaPortalProperties.getObaBaseUrl() + "/apis/" + input.getApiId();
             HttpGet httpGet = new HttpGet(url);
             return tokenProviderService.addOrganizationToken(httpGet, byOrganizationAndApi.getOrganizationId());
         };
 
-        return new RequestExecutor.Builder<>(requestBuilder, httpClient, Api.class)
+        return new RequestExecutor.Builder<>(requestBuilder, httpClient, ApiWithCountryDataProviders.class)
                 .addResponseValidator(new ResponseNotEmptyValidator())
                 .addResponseValidator(new ExpectedHttpCodesValidator(200))
                 .logRequestResponsesOnError(obaPortalProperties.isLogRequestsAndResponsesOnError())
                 .build()
                 .execute(byOrganizationAndApi);
+    }
+
+    public List<ApiWithCountryDataProviders> findAllApisWithRegistrations(UUID organizationId) {
+        RequestBuilder<UUID> requestBuilder = (input) -> {
+            String url = obaPortalProperties.getObaBaseUrl() + "/apis/";
+            HttpGet httpGet = new HttpGet(url);
+            return tokenProviderService.addOrganizationToken(httpGet, organizationId);
+        };
+
+        return new RequestExecutor.Builder<>(requestBuilder, httpClient, ApiWithRegistrationsList.class)
+                .addResponseValidator(new ResponseNotEmptyValidator())
+                .addResponseValidator(new ExpectedHttpCodesValidator(200))
+                .logRequestResponsesOnError(obaPortalProperties.isLogRequestsAndResponsesOnError())
+                .build()
+                .execute(organizationId);
     }
 }

@@ -10,6 +10,7 @@ import com.obaccelerator.portal.config.ObaPortalProperties;
 import com.obaccelerator.portal.session.CognitoIdToken;
 import com.obaccelerator.portal.session.CognitoKey;
 import com.obaccelerator.portal.session.InvalidCognitoTokenException;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.client.HttpClient;
 import org.jose4j.jwk.JsonWebKey;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Map;
 import java.util.Optional;
 
@@ -36,12 +38,19 @@ public class CognitoService {
         this.httpClient = httpClient;
     }
 
+    @SneakyThrows
     public CognitoKey fetchCognitoPublicKey(PublicKeyEndpointInput input, String keyId) {
-        PublicKeyCollection publicKeyCollection = new RequestExecutor.Builder<>(publicKeyRequestBuilder, httpClient, PublicKeyCollection.class)
-                .addResponseValidator(new ExpectedHttpCodesValidator(200))
-                .addResponseValidator(new ResponseNotEmptyValidator())
-                .build()
-                .execute(input);
+        PublicKeyCollection publicKeyCollection = null;
+        if(portalProperties.getAwsFetchPublicKeysEnabled().equals("true")) {
+            publicKeyCollection = new RequestExecutor.Builder<>(publicKeyRequestBuilder, httpClient, PublicKeyCollection.class)
+                    .addResponseValidator(new ExpectedHttpCodesValidator(200))
+                    .addResponseValidator(new ResponseNotEmptyValidator())
+                    .build()
+                    .execute(input);
+        } else {
+            InputStream resourceAsStream = getClass().getResourceAsStream("/aws/fallback.public.keys.json");
+            publicKeyCollection = new ObjectMapper().readValue(resourceAsStream, PublicKeyCollection.class);
+        }
 
         return publicKeyCollection.getKey(keyId);
     }
@@ -89,6 +98,7 @@ public class CognitoService {
             throw new InvalidCognitoTokenException(e);
         }
 
+        log.info("Fetching AWS public keys at {}", portalProperties.cognitoPublicKeysUrl());
         CognitoKey cognitoKey = fetchCognitoPublicKey(new PublicKeyEndpointInput(portalProperties.cognitoPublicKeysUrl()), kidOptional.get());
 
         JsonWebKey webKey = null;

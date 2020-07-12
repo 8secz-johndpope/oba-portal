@@ -56,9 +56,29 @@ public class ApplicationController {
 
     @DeleteMapping("/applications/{applicationId}/public-keys/{publicKeyId}")
     public void deleteApplicationPublicKey(PortalUser portalUser,
-                                                           @PathVariable UUID applicationId,
-                                                           @PathVariable UUID publicKeyId) {
+                                           @PathVariable UUID applicationId,
+                                           @PathVariable UUID publicKeyId) {
         applicationGatewayService.deleteApplicationPublicKey(portalUser.getOrganizationId(), applicationId, publicKeyId);
+    }
+
+    @GetMapping("/applications/{applicationId}/available-country-data-providers")
+    public List<AvailableCountryDataProvider> findAvailableWithEnabledProjection(PortalUser portalUser,
+                                                                                 @PathVariable UUID applicationId) {
+        return applicationGatewayService.findAvailableWithEnabledProjection(portalUser.getOrganizationId(), applicationId);
+    }
+
+    @PostMapping("/applications/{applicationId}/enabled-country-data-providers")
+    public EnabledCountryDataProvider enableApi(PortalUser portalUser,
+                                                @PathVariable UUID applicationId,
+                                                @RequestBody @Valid EnableCountryDataProviderRequest enableCountryDataProviderRequest) {
+        return applicationGatewayService.createEnabledCountryDataProvider(portalUser.getOrganizationId(), applicationId, enableCountryDataProviderRequest);
+    }
+
+    @DeleteMapping("/applications/{applicationId}/enabled-country-data-providers/{systemName}")
+    public void disableApi(PortalUser portalUser,
+                                 @PathVariable UUID applicationId,
+                                 @PathVariable String systemName) {
+        applicationGatewayService.deleteEnabledCountryDataProvider(portalUser.getOrganizationId(), applicationId, systemName);
     }
 
 }

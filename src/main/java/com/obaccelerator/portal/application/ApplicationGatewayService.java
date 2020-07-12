@@ -1,8 +1,6 @@
 package com.obaccelerator.portal.application;
 
 import com.obaccelerator.common.http.*;
-import com.obaccelerator.portal.apiregistration.ApiRegistrationList;
-import com.obaccelerator.portal.apiregistration.ByOrganizationAndApi;
 import com.obaccelerator.portal.config.ObaPortalProperties;
 import com.obaccelerator.portal.token.TokenProviderService;
 import org.apache.http.client.HttpClient;
@@ -13,7 +11,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 public class ApplicationGatewayService {
@@ -135,5 +132,51 @@ public class ApplicationGatewayService {
                 .logRequestResponsesOnError(obaPortalProperties.isLogRequestsAndResponsesOnError())
                 .build()
                 .execute(publicKeyId);
+    }
+
+    public EnabledCountryDataProvider createEnabledCountryDataProvider(UUID organizationId, UUID applicationId, EnableCountryDataProviderRequest enableCountryDataProviderRequest) {
+        RequestBuilder<EnableCountryDataProviderRequest> requestBuilder = (input) -> {
+            String url = obaPortalProperties.getObaBaseUrl() + "/applications/" + applicationId.toString() + "/enabled-country-data-providers";
+            HttpPost httpPost = new HttpPost(url);
+            httpPost.setEntity(new JsonHttpEntity<>(enableCountryDataProviderRequest));
+            return tokenProviderService.addOrganizationToken(httpPost, organizationId);
+        };
+
+        return new RequestExecutor.Builder<>(requestBuilder, httpClient, EnabledCountryDataProvider.class)
+                .addResponseValidator(new ResponseNotEmptyValidator())
+                .addResponseValidator(new ExpectedHttpCodesValidator(200))
+                .logRequestResponsesOnError(obaPortalProperties.isLogRequestsAndResponsesOnError())
+                .build()
+                .execute(enableCountryDataProviderRequest);
+    }
+
+    public void deleteEnabledCountryDataProvider(UUID organizationId, UUID applicationId, String systemName) {
+        RequestBuilder<String> requestBuilder = (input) -> {
+            String url = obaPortalProperties.getObaBaseUrl() + "/applications/" + applicationId.toString() + "/enabled-country-data-providers/" + systemName;
+            HttpDelete httpDelete = new HttpDelete(url);
+            return tokenProviderService.addOrganizationToken(httpDelete, organizationId);
+        };
+
+        new RequestExecutor.Builder<>(requestBuilder, httpClient, Void.class)
+                .addResponseValidator(new ResponseNotEmptyValidator())
+                .addResponseValidator(new ExpectedHttpCodesValidator(200))
+                .logRequestResponsesOnError(obaPortalProperties.isLogRequestsAndResponsesOnError())
+                .build()
+                .execute(systemName);
+    }
+
+    public List<AvailableCountryDataProvider> findAvailableWithEnabledProjection(UUID organizationId, UUID applicationId) {
+        RequestBuilder<UUID> requestBuilder = (input) -> {
+            String url = obaPortalProperties.getObaBaseUrl() + "/applications/" + applicationId.toString() + "/available-country-data-providers";
+            HttpGet httpGet = new HttpGet(url);
+            return tokenProviderService.addOrganizationToken(httpGet, organizationId);
+        };
+
+        return new RequestExecutor.Builder<>(requestBuilder, httpClient, AvailableCountryDataProviderList.class)
+                .addResponseValidator(new ResponseNotEmptyValidator())
+                .addResponseValidator(new ExpectedHttpCodesValidator(200))
+                .logRequestResponsesOnError(obaPortalProperties.isLogRequestsAndResponsesOnError())
+                .build()
+                .execute(applicationId);
     }
 }

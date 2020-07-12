@@ -58,6 +58,9 @@ public class ObaPortalProperties {
     @Value("${server.servlet.context-path}")
     private String applicationContextPath;
 
+    @Value("aws.fetch.public.keys.enabled")
+    private String awsFetchPublicKeysEnabled;
+
     public String cognitoPublicKeysUrl() {
         return String.format("https://cognito-idp.%s.amazonaws.com/%s/.well-known/jwks.json", cognitoAwsRegion, cognitoUserPoolId);
     }

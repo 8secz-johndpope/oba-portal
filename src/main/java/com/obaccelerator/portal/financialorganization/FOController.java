@@ -16,16 +16,16 @@ public class FOController {
         this.FinancialOrganizationGatewayService = FinancialOrganizationGatewayService;
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_ORGANIZATION', 'ROLE_APPLICATION')")
+    @PreAuthorize("hasAnyRole('ROLE_ORGANIZATION')")
     @GetMapping("/financial-organizations")
-    public FOListResponse banksList(PortalUser portalUser) {
+    public FOListResponse financialOrganizationsList(PortalUser portalUser) {
         return FinancialOrganizationGatewayService.findFinancialOrganizations(portalUser.getOrganizationId());
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_ORGANIZATION', 'ROLE_APPLICATION')")
-    @GetMapping("/financial-organizations/{bankSystemName}")
-    public FinancialOrganization bank(PortalUser portalUser,
-                                      @PathVariable("bankSystemName") String bankSystemName) {
-        return FinancialOrganizationGatewayService.findFinancialOrganization(portalUser.getOrganizationId(), bankSystemName);
+    @PreAuthorize("hasAnyRole('ROLE_ORGANIZATION')")
+    @GetMapping("/financial-organizations/{systemName}")
+    public FinancialOrganization financialOrganization(PortalUser portalUser,
+                                                       @PathVariable("systemName") String systemName) {
+        return FinancialOrganizationGatewayService.findFinancialOrganization(portalUser.getOrganizationId(), systemName);
     }
 }
