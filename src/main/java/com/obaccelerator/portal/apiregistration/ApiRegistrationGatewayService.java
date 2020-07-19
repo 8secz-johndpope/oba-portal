@@ -63,7 +63,8 @@ public class ApiRegistrationGatewayService {
     }
 
     public ApiRegistration findRegistrationForOrganization(UUID organizationId, UUID registrationId) {
-        return findRegistrationsForOrganization(organizationId).stream().filter(r -> r.getId().equals(registrationId))
+        List<ApiRegistration> registrationsForOrganization = findRegistrationsForOrganization(organizationId);
+        return registrationsForOrganization.stream().filter(r -> r.getId().equals(registrationId))
                 .findAny()
                 .orElseThrow(() -> new EntityNotFoundException(ApiRegistration.class, registrationId));
     }

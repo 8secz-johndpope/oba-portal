@@ -12,7 +12,7 @@ import javax.validation.constraints.NotEmpty;
 public class UpdateObaOrganizationRequest {
 
     @NotEmpty
-    private String organizationId;
+    private String id;
     @NotEmpty
     private String name;
     private String vatNumber;

@@ -22,5 +22,6 @@ public class ApiWithCountryDataProviders {
     List<ApiRegistration> apiRegistrations;
     List<CountryDataProvider> countryDataProviders;
     String title;
+    List<Product> products;
 
 }
