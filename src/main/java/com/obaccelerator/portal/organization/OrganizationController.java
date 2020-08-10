@@ -6,6 +6,7 @@ import com.obaccelerator.portal.certificate.CertificateObaGatewayService;
 import com.obaccelerator.portal.portaluser.PortalUser;
 import com.obaccelerator.portal.redirecturl.RedirectUrlGatewayService;
 import com.obaccelerator.portal.redirecturl.RedirectUrlResponse;
+import com.obaccelerator.portal.redirecturl.RedirectUrlWithNumberOfRegistrations;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,7 +37,7 @@ public class OrganizationController {
         return organizationObaGatewayService.findOrganization(portalUser.getOrganizationId());
     }
 
-    @PutMapping("/organizations")
+    @PutMapping("/organizations/{organizationId}")
     public ObaOrganizationResponse updateOrganization(@Valid @RequestBody UpdateObaOrganizationRequest updateObaOrganizationRequest,
                                                       PortalUser portalUser) {
         return organizationObaGatewayService.updateOrganization(updateObaOrganizationRequest, portalUser);
@@ -45,7 +46,7 @@ public class OrganizationController {
     @GetMapping("/organizations/completeness-report")
     public CompletenessReport organizationComplete(PortalUser portalUser) {
         ObaOrganizationResponse organization = organizationObaGatewayService.findOrganization(portalUser.getOrganizationId());
-        List<RedirectUrlResponse> redirectUrls = redirectUrlGatewayService.findAllForOrganization(portalUser.getOrganizationId());
+        List<RedirectUrlWithNumberOfRegistrations> redirectUrls = redirectUrlGatewayService.findAllForOrganization(portalUser.getOrganizationId());
         CertificateListResponse certificates = certificateObaGatewayService.findAllForOrganization(portalUser.getOrganizationId(), true);
         boolean signing = certificates.stream().anyMatch(c -> c.getKeyPurpose().equals(KeyPurpose.SIGNING));
         boolean transport = certificates.stream().anyMatch(c -> c.getKeyPurpose().equals(KeyPurpose.TRANSPORT));

@@ -47,7 +47,7 @@ public class OrganizationObaGatewayService {
     ObaOrganizationResponse updateOrganization(UpdateObaOrganizationRequest updateObaOrganizationRequest, PortalUser portalUser) {
 
         RequestBuilder<UpdateObaOrganizationRequest> requestBuilder = (input) -> {
-            String url = obaPortalProperties.getObaBaseUrl() + "/organizations";
+            String url = obaPortalProperties.getObaBaseUrl() + "/organizations/" + updateObaOrganizationRequest.getId();
             HttpPut httpPut = new HttpPut(url);
             JsonHttpEntity<UpdateObaOrganizationRequest> entity = new JsonHttpEntity<>(input);
             httpPut.setEntity(entity);

@@ -19,7 +19,7 @@ public class ApiWithCountryDataProviders {
     boolean sandbox;
     Status status;
     List<String> services = new ArrayList<>();
-    List<ApiRegistration> apiRegistrations;
+    List<ApiRegistrationWithNumberOfConnections> apiRegistrations;
     List<CountryDataProvider> countryDataProviders;
     String title;
     List<Product> products;

@@ -16,4 +16,5 @@ public class CountryDataProvider {
     ApiType type;
     Status status;
     boolean sandbox;
+    Logos logos;
 }

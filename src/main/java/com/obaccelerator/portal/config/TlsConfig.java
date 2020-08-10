@@ -16,7 +16,7 @@ public class TlsConfig {
 
     /**
      * Specifies how the server treats clients. There is a server keystore that holds a server certificate, but
-     * no trust store, because there is a frontend / web browser connecting, no some other system.
+     * no trust store, because there is a frontend / web browser connecting, not some other system.
      *
      * OBA portal uses one-way TLS towards the client
      * @param properties

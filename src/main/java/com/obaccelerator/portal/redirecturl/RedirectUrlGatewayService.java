@@ -27,13 +27,13 @@ public class RedirectUrlGatewayService {
         this.obaHttpClient = obaHttpClient;
     }
 
-    public List<RedirectUrlResponse> findAllForOrganization(UUID organizationId) {
+    public List<RedirectUrlWithNumberOfRegistrations> findAllForOrganization(UUID organizationId) {
         RequestBuilder<UUID> requestBuilder = (input) -> {
             HttpGet httpGet = new HttpGet(obaPortalProperties.getObaBaseUrl() + "/redirect-urls");
             return tokenProviderService.addOrganizationToken(httpGet, organizationId);
         };
 
-        return new RequestExecutor.Builder<>(requestBuilder, obaHttpClient, RedirectUrlListResponse.class)
+        return new RequestExecutor.Builder<>(requestBuilder, obaHttpClient, RedirectUrlWithNumberOfRegistrationsListResponse.class)
                 .addResponseValidator(new ResponseNotEmptyValidator())
                 .addResponseValidator(new ExpectedHttpCodesValidator(200))
                 .logRequestResponsesOnError(obaPortalProperties.isLogRequestsAndResponsesOnError())

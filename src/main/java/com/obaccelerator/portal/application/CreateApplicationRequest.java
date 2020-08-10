@@ -9,10 +9,10 @@ import javax.validation.constraints.*;
 @Getter
 @Setter
 public class CreateApplicationRequest {
-    @Pattern(regexp = ObaRegex.PATTERN_NAME)
+    @Pattern(regexp = ObaRegex.PATTERN_NAME) @Max(20)
     private String name;
-    @Email
+    @Email @Max(80)
     String technicalContactEmail;
-    @Pattern(regexp = ObaRegex.PATTERN_NAME)
+    @Pattern(regexp = ObaRegex.PATTERN_NAME) @Max(80)
     String technicalContactName;
 }

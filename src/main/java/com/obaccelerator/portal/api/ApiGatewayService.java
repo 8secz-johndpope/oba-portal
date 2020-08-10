@@ -28,14 +28,14 @@ public class ApiGatewayService {
         this.httpClient = httpClient;
     }
 
-    public ApiWithCountryDataProviders findOneApiWithRegistrations(ByOrganizationAndApi byOrganizationAndApi) {
+    public ApiWithRegistrations findOneApiWithRegistrations(ByOrganizationAndApi byOrganizationAndApi) {
         RequestBuilder<ByOrganizationAndApi> requestBuilder = (input) -> {
             String url = obaPortalProperties.getObaBaseUrl() + "/apis/" + input.getApiId();
             HttpGet httpGet = new HttpGet(url);
             return tokenProviderService.addOrganizationToken(httpGet, byOrganizationAndApi.getOrganizationId());
         };
 
-        return new RequestExecutor.Builder<>(requestBuilder, httpClient, ApiWithCountryDataProviders.class)
+        return new RequestExecutor.Builder<>(requestBuilder, httpClient, ApiWithRegistrations.class)
                 .addResponseValidator(new ResponseNotEmptyValidator())
                 .addResponseValidator(new ExpectedHttpCodesValidator(200))
                 .logRequestResponsesOnError(obaPortalProperties.isLogRequestsAndResponsesOnError())

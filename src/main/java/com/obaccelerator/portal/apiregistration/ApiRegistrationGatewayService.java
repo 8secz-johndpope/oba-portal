@@ -3,13 +3,13 @@ package com.obaccelerator.portal.apiregistration;
 import com.obaccelerator.common.error.EntityNotFoundException;
 import com.obaccelerator.common.form.SubmittedForm;
 import com.obaccelerator.common.http.*;
-import com.obaccelerator.common.model.organization.OrganizationId;
 import com.obaccelerator.portal.config.ObaPortalProperties;
 import com.obaccelerator.portal.token.TokenProviderService;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPatch;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpPut;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
@@ -150,6 +150,37 @@ public class ApiRegistrationGatewayService {
         };
 
         return new RequestExecutor.Builder<>(requestBuilder, httpClient, ApiRegistrationStepDefinition.class)
+                .addResponseValidator(new ResponseNotEmptyValidator())
+                .addResponseValidator(new ExpectedHttpCodesValidator(200))
+                .logRequestResponsesOnError(obaPortalProperties.isLogRequestsAndResponsesOnError())
+                .build()
+                .execute(organizationId);
+    }
+
+    public void deleteApiRegistration(UUID organizationId, UUID apiRegistrationId) {
+        RequestBuilder<UUID> requestBuilder = (input) -> {
+            String url = obaPortalProperties.getObaBaseUrl() + "/api-registrations/" + apiRegistrationId.toString();
+            HttpDelete httpGet = new HttpDelete(url);
+            return tokenProviderService.addOrganizationToken(httpGet, organizationId);
+        };
+
+        new RequestExecutor.Builder<>(requestBuilder, httpClient, Void.class)
+                .addResponseValidator(new ResponseNotEmptyValidator())
+                .addResponseValidator(new ExpectedHttpCodesValidator(200))
+                .logRequestResponsesOnError(obaPortalProperties.isLogRequestsAndResponsesOnError())
+                .build()
+                .execute(organizationId);
+    }
+
+    public void patchEnableRegistration(UUID organizationId, UUID apiRegistrationId) {
+        RequestBuilder<UUID> requestBuilder = (input) -> {
+            String url = obaPortalProperties.getObaBaseUrl() + "/api-registrations/" + apiRegistrationId.toString();
+            HttpPatch patch = new HttpPatch(url);
+            patch.setEntity(new JsonHttpEntity<>(new PatchEnableRegistration()));
+            return tokenProviderService.addOrganizationToken(patch, organizationId);
+        };
+
+        new RequestExecutor.Builder<>(requestBuilder, httpClient, Void.class)
                 .addResponseValidator(new ResponseNotEmptyValidator())
                 .addResponseValidator(new ExpectedHttpCodesValidator(200))
                 .logRequestResponsesOnError(obaPortalProperties.isLogRequestsAndResponsesOnError())

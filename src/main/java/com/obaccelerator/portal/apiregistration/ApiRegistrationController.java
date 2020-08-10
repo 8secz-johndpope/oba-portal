@@ -2,6 +2,7 @@ package com.obaccelerator.portal.apiregistration;
 
 import com.obaccelerator.common.form.SubmittedForm;
 import com.obaccelerator.portal.portaluser.PortalUser;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -9,6 +10,7 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.UUID;
 
+@Slf4j
 @PreAuthorize("hasRole('ROLE_ORGANIZATION')")
 @RestController
 public class ApiRegistrationController {
@@ -22,7 +24,20 @@ public class ApiRegistrationController {
     @GetMapping("/api-registrations")
     public List<ApiRegistration> findApiRegistrationsForApi(PortalUser portalUser,
                                                             @RequestParam("apiId") UUID apiId) {
+        log.info("endpoint hit!");
         return apiRegistrationGatewayService.findApiRegistrations(new ByOrganizationAndApi(portalUser.getOrganizationId(), apiId));
+    }
+
+    @DeleteMapping("/api-registrations/{apiRegistrationId}")
+    public void deleteRegistration(PortalUser portalUser,
+                                   @PathVariable UUID apiRegistrationId) {
+        apiRegistrationGatewayService.deleteApiRegistration(portalUser.getOrganizationId(), apiRegistrationId);
+    }
+
+    @PatchMapping("/api-registrations/{apiRegistrationId}")
+    public void patchEnableRegistration(PortalUser portalUser,
+                                        @PathVariable UUID apiRegistrationId) {
+        apiRegistrationGatewayService.patchEnableRegistration(portalUser.getOrganizationId(), apiRegistrationId);
     }
 
     @GetMapping("/api-registrations/{registrationId}")
@@ -52,8 +67,8 @@ public class ApiRegistrationController {
 
     @PostMapping("/api-registration-update-step/{apiIRegistrationId}")
     public ApiRegistration putUpdateRegistrationStep(PortalUser portalUser,
-                                                                   @PathVariable(value = "apiIRegistrationId") UUID apiIRegistrationId,
-                                                                   @RequestBody @Valid SubmittedForm submittedForm) {
+                                                     @PathVariable(value = "apiIRegistrationId") UUID apiIRegistrationId,
+                                                     @RequestBody @Valid SubmittedForm submittedForm) {
         return apiRegistrationGatewayService
                 .submitUpdateRegistrationStep(portalUser.getOrganizationId(), apiIRegistrationId, submittedForm);
     }

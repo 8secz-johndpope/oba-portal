@@ -23,12 +23,13 @@ public class ApiController {
 
 
     @GetMapping("/apis/{apiId}")
-    public ApiWithCountryDataProviders findById(PortalUser portalUser, @PathVariable("apiId") UUID apiId) {
-        return apiGatewayService.findOneApiWithRegistrations(new ByOrganizationAndApi(portalUser.getOrganizationId(), apiId));
+    public ApiWithRegistrations findOneApiWithRegistrations(PortalUser portalUser, @PathVariable("apiId") UUID apiId) {
+        ApiWithRegistrations oneApiWithRegistrations = apiGatewayService.findOneApiWithRegistrations(new ByOrganizationAndApi(portalUser.getOrganizationId(), apiId));
+        return  oneApiWithRegistrations;
     }
 
     @GetMapping("/apis")
-    public List<ApiWithCountryDataProviders> findWithRegistrations(PortalUser portalUser) {
+    public List<ApiWithCountryDataProviders> findAllApisWithRegistrations(PortalUser portalUser) {
         return apiGatewayService.findAllApisWithRegistrations(portalUser.getOrganizationId());
     }
 }

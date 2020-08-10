@@ -19,7 +19,7 @@ public class RedirectUrlController {
     }
 
     @GetMapping("/redirect-urls")
-    public List<RedirectUrlResponse> getRedirectUrlsForOrganization(PortalUser portalUser) {
+    public List<RedirectUrlWithNumberOfRegistrations> getRedirectUrlsForOrganization(PortalUser portalUser) {
         return redirectUrlGatewayService.findAllForOrganization(portalUser.getOrganizationId());
     }
 
