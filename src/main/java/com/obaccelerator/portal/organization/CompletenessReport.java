@@ -6,6 +6,8 @@ import lombok.Value;
 public class CompletenessReport {
     boolean redirectUrl;
     boolean organizationFieldsComplete;
-    boolean validSigningCertificate;
-    boolean validTransportCertificate;
+    boolean signingCertificateExists;
+    boolean signingCertificateValid;
+    boolean transportCertificateExists;
+    boolean transportCertificateValid;
 }
