@@ -24,7 +24,6 @@ public class ApiRegistrationController {
     @GetMapping("/api-registrations")
     public List<ApiRegistration> findApiRegistrationsForApi(PortalUser portalUser,
                                                             @RequestParam("apiId") UUID apiId) {
-        log.info("endpoint hit!");
         return apiRegistrationGatewayService.findApiRegistrations(new ByOrganizationAndApi(portalUser.getOrganizationId(), apiId));
     }
 
@@ -65,7 +64,7 @@ public class ApiRegistrationController {
                 .getUpdateRegistrationStepDefinition(portalUser.getOrganizationId(), apiIRegistrationId);
     }
 
-    @PostMapping("/api-registration-update-step/{apiIRegistrationId}")
+    @PutMapping("/api-registration-update-step/{apiIRegistrationId}")
     public ApiRegistration putUpdateRegistrationStep(PortalUser portalUser,
                                                      @PathVariable(value = "apiIRegistrationId") UUID apiIRegistrationId,
                                                      @RequestBody @Valid SubmittedForm submittedForm) {

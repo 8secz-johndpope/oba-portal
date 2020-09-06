@@ -5,8 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class CheckBoxValue {
+public class LabelValue {
     private String label;
     private String value;
-    private boolean selected;
 }

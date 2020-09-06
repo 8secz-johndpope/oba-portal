@@ -3,13 +3,11 @@ package com.obaccelerator.portal.apiregistration;
 import com.obaccelerator.common.error.EntityNotFoundException;
 import com.obaccelerator.common.form.SubmittedForm;
 import com.obaccelerator.common.http.*;
+import com.obaccelerator.common.http.RequestBuilder;
 import com.obaccelerator.portal.config.ObaPortalProperties;
 import com.obaccelerator.portal.token.TokenProviderService;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpDelete;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPatch;
-import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.*;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
@@ -129,9 +127,9 @@ public class ApiRegistrationGatewayService {
     public ApiRegistration submitUpdateRegistrationStep(UUID organizationId, UUID apiRegistrationId, SubmittedForm submittedForm) {
         RequestBuilder<SubmittedForm> requestBuilder = (input) -> {
             String url = obaPortalProperties.getObaBaseUrl() + "/api-registration-update-step-definition/" + apiRegistrationId.toString();
-            HttpPost httpPost = new HttpPost(url);
-            httpPost.setEntity(new JsonHttpEntity<>(submittedForm));
-            return tokenProviderService.addOrganizationToken(httpPost, organizationId);
+            HttpPut put = new HttpPut(url);
+            put.setEntity(new JsonHttpEntity<>(submittedForm));
+            return tokenProviderService.addOrganizationToken(put, organizationId);
         };
 
         return new RequestExecutor.Builder<>(requestBuilder, httpClient, ApiRegistration.class)
