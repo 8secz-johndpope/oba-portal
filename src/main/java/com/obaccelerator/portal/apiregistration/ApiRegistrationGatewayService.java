@@ -2,8 +2,8 @@ package com.obaccelerator.portal.apiregistration;
 
 import com.obaccelerator.common.error.EntityNotFoundException;
 import com.obaccelerator.common.form.SubmittedForm;
-import com.obaccelerator.common.http.*;
 import com.obaccelerator.common.http.RequestBuilder;
+import com.obaccelerator.common.http.*;
 import com.obaccelerator.portal.config.ObaPortalProperties;
 import com.obaccelerator.portal.token.TokenProviderService;
 import org.apache.http.client.HttpClient;
@@ -116,12 +116,18 @@ public class ApiRegistrationGatewayService {
             return tokenProviderService.addOrganizationToken(httpPost, organizationId);
         };
 
-        return new RequestExecutor.Builder<>(requestBuilder, httpClient, ApiRegistrationStep.class)
+        ApiRegistrationStep registrationStep = new RequestExecutor.Builder<>(requestBuilder, httpClient, ApiRegistrationStep.class)
                 .addResponseValidator(new ResponseNotEmptyValidator())
-                .addResponseValidator(new ExpectedHttpCodesValidator(200))
+                .addResponseValidator(new ExpectedHttpCodesValidator(200, 400))
                 .logRequestResponsesOnError(obaPortalProperties.isLogRequestsAndResponsesOnError())
                 .build()
                 .execute(submittedForm);
+
+        if (registrationStep.isError()) {
+            throw new ApiRegistrationFieldsException(registrationStep.getCode(), registrationStep.getMessage());
+        }
+
+        return registrationStep;
     }
 
     public ApiRegistration submitUpdateRegistrationStep(UUID organizationId, UUID apiRegistrationId, SubmittedForm submittedForm) {
@@ -132,12 +138,19 @@ public class ApiRegistrationGatewayService {
             return tokenProviderService.addOrganizationToken(put, organizationId);
         };
 
-        return new RequestExecutor.Builder<>(requestBuilder, httpClient, ApiRegistration.class)
+        // We are allowing 400 responses here, because we want to map the result
+        ApiRegistration registration = new RequestExecutor.Builder<>(requestBuilder, httpClient, ApiRegistration.class)
                 .addResponseValidator(new ResponseNotEmptyValidator())
-                .addResponseValidator(new ExpectedHttpCodesValidator(200))
+                .addResponseValidator(new ExpectedHttpCodesValidator(200, 400))
                 .logRequestResponsesOnError(obaPortalProperties.isLogRequestsAndResponsesOnError())
                 .build()
                 .execute(submittedForm);
+
+        if (registration.isError()) {
+            throw new ApiRegistrationFieldsException(registration.code, registration.message);
+        }
+
+        return registration;
     }
 
     public ApiRegistrationStepDefinition getUpdateRegistrationStepDefinition(UUID organizationId, UUID apiIRegistrationId) {

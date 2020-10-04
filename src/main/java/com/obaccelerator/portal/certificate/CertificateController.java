@@ -17,9 +17,14 @@ public class CertificateController {
         this.certificateObaGatewayService = certificateObaGatewayService;
     }
 
-    @PostMapping("/certificates")
+    @PostMapping("/generated-certificates")
     public CertificateResponse create(@Valid @RequestBody CreateOrganizationCertificateRequest request, PortalUser portalUser) {
         return certificateObaGatewayService.createCertificateInOba(request, portalUser.getOrganizationId());
+    }
+
+    @PostMapping("/uploaded-certificates")
+    public CertificateResponse upload(@Valid @RequestBody UploadedCertificateRequest request, PortalUser portalUser) {
+        return certificateObaGatewayService.uploadCertificatesToOba(request, portalUser.getOrganizationId());
     }
 
     @GetMapping("/certificates")

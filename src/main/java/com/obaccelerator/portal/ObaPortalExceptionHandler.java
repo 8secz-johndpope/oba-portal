@@ -3,6 +3,7 @@ package com.obaccelerator.portal;
 import com.obaccelerator.common.error.ObaBaseExceptionHandler;
 import com.obaccelerator.common.error.ObaError;
 import com.obaccelerator.common.error.ObaErrorMessage;
+import com.obaccelerator.portal.apiregistration.ApiRegistrationFieldsException;
 import com.obaccelerator.portal.auth.NotAuthorizedException;
 import com.obaccelerator.portal.registration.RegistrationAlreadyExistsException;
 import com.obaccelerator.portal.session.InvalidCognitoTokenException;
@@ -46,16 +47,22 @@ public class ObaPortalExceptionHandler extends ObaBaseExceptionHandler {
      * Combining a custom http configuration in a Spring configuration that extends WebSecurityConfigurerAdapter with
      * the use of @PreAuthorize annotations results in AccessDeniedException being caught and translated to a 500.
      * I stopped trying to figure out why exactly and decided to handle it is a regular application error.
-     *
+     * <p>
      * Setting the authorization rules with antMatcher rules in the http configuration will translate the error
      * correctly to a 403 response, but it will trigger Spring to redirect to an HTML error page, so didn't go
      * for that solution.
-     *
+     * <p>
      * See https://stackoverflow.com/questions/43554489/spring-mvc-accessdeniedexception-500-error-received-instead-of-custom-401-error
      */
     @ExceptionHandler(value = AccessDeniedException.class)
-    public ResponseEntity<ObaErrorMessage> handleAccessDeniedException(AccessDeniedException e, WebRequest webRequest) {
+    public ResponseEntity<ObaErrorMessage> handleAccessDeniedException(AccessDeniedException e) {
         ObaErrorMessage errorMessage = new ObaErrorMessage(ObaError.OBA_ACCESS_DENIED);
+        return handleAsError(errorMessage, e);
+    }
+
+    @ExceptionHandler(value = ApiRegistrationFieldsException.class)
+    public ResponseEntity<ObaErrorMessage> handleAccessDeniedException(ApiRegistrationFieldsException e) {
+        ObaErrorMessage errorMessage = new ObaErrorMessage(400, e.getCode(), e.getMessage());
         return handleAsError(errorMessage, e);
     }
 

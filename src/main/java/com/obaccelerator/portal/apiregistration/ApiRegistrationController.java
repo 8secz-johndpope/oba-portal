@@ -64,12 +64,12 @@ public class ApiRegistrationController {
                 .getUpdateRegistrationStepDefinition(portalUser.getOrganizationId(), apiIRegistrationId);
     }
 
-    @PutMapping("/api-registration-update-step/{apiIRegistrationId}")
+    @PutMapping("/api-registration-update-step/{apiRegistrationId}")
     public ApiRegistration putUpdateRegistrationStep(PortalUser portalUser,
-                                                     @PathVariable(value = "apiIRegistrationId") UUID apiIRegistrationId,
+                                                     @PathVariable(value = "apiRegistrationId") UUID apiRegistrationId,
                                                      @RequestBody @Valid SubmittedForm submittedForm) {
         return apiRegistrationGatewayService
-                .submitUpdateRegistrationStep(portalUser.getOrganizationId(), apiIRegistrationId, submittedForm);
+                .submitUpdateRegistrationStep(portalUser.getOrganizationId(), apiRegistrationId, submittedForm);
     }
 
 }

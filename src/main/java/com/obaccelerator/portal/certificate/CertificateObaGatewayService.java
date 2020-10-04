@@ -32,9 +32,27 @@ public class CertificateObaGatewayService {
     public CertificateResponse createCertificateInOba(CreateOrganizationCertificateRequest certificateRequest, UUID organizationId) {
 
         RequestBuilder<CreateOrganizationCertificateRequest> requestBuilder = (input) -> {
-            String url = obaPortalProperties.getObaBaseUrl() + "/certificates";
+            String url = obaPortalProperties.getObaBaseUrl() + "/generated-certificates";
             HttpPost httpPost = new HttpPost(url);
             JsonHttpEntity<CreateOrganizationCertificateRequest> entity = new JsonHttpEntity<>(input);
+            httpPost.setEntity(entity);
+            return tokenProviderService.addOrganizationToken(httpPost, organizationId);
+        };
+
+        return new RequestExecutor.Builder<>(requestBuilder, obaHttpClient, CertificateResponse.class)
+                .addResponseValidator(new ResponseNotEmptyValidator())
+                .addResponseValidator(new ExpectedHttpCodesValidator(201))
+                .logRequestResponsesOnError(obaPortalProperties.isLogRequestsAndResponsesOnError())
+                .build()
+                .execute(certificateRequest);
+    }
+
+    public CertificateResponse uploadCertificatesToOba(UploadedCertificateRequest certificateRequest, UUID organizationId) {
+
+        RequestBuilder<UploadedCertificateRequest> requestBuilder = (input) -> {
+            String url = obaPortalProperties.getObaBaseUrl() + "/uploaded-certificates";
+            HttpPost httpPost = new HttpPost(url);
+            JsonHttpEntity<UploadedCertificateRequest> entity = new JsonHttpEntity<>(input);
             httpPost.setEntity(entity);
             return tokenProviderService.addOrganizationToken(httpPost, organizationId);
         };
