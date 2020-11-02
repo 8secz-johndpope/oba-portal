@@ -1,10 +1,8 @@
 package com.obaccelerator.portal.application;
 
-
 import com.obaccelerator.portal.api.ApiType;
 import com.obaccelerator.portal.api.Status;
 import lombok.Value;
-
 
 @Value
 public class CountryDataProvider {
@@ -17,4 +15,5 @@ public class CountryDataProvider {
     Status status;
     boolean sandbox;
     Logos logos;
+    DescriptionField bankPreferredDescriptionField;
 }

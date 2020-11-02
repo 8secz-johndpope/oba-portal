@@ -21,6 +21,5 @@ public class UploadedCertificateRequest {
     @NotEmpty
     private String name;
 
-    @NotEmpty
     private String description;
 }
